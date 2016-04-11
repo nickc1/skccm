@@ -65,7 +65,7 @@ skCCM also allows the testing of library length on forecast skill.
 
 ```python
 lib_lens = np.arange(10,ts_length,ts_length/20) #library lengths
-sc1, sc2 = CCM.predict_causation_lib_len(X1,y1,X2,y2,lib_lens)
+x1_xmap_x2, x2_xmap_x1 = CCM.predict_causation_lib_len(X1,y1,X2,y2,lib_lens)
 ```
 
 ![library length](figures/xmap_lib_len.png "library length")
