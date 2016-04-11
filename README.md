@@ -2,7 +2,7 @@
 skCCM
 ========
 
-This package is an implementation of [convergent cross mapping][ccm-wiki] (CCM) using scikit-learn's style. More specifically it is an implementation from the paper, [Detecting Causality in Complex Ecosystems][ccm-paper]. It reconstructs [phase spaces][phase-space] to analyze behavior of the effects of one system on the other.
+This package is an implementation of [convergent cross mapping][ccm-wiki] (CCM) using scikit-learn's style. More specifically it is an implementation from the paper, [Detecting Causality in Complex Ecosystems][ccm-paper]. It reconstructs [phase spaces][phase-space] to analyze the effects of one system on the other.
 
 Quick Explanation
 -----------------
@@ -27,7 +27,7 @@ x1,x2 = data.coupled_logistic(rx1,rx2,b12,b21,ts_length)
 
 ![coupled logistic](figures/coupled_logistic.png "coupled logistic")
 
-Next, we need to embed the time series. First the mutual information must be calculated in order to establish an appropriate lag.
+Next, we need to embed the time series. The mutual information must be calculated in order to establish an appropriate lag.
 
 ```python
 em_x1 = ccm.embed(x1)
@@ -59,7 +59,9 @@ sc1, sc2 = CCM.predict_causation(X1,y1,X2,y2)
 
 ![xmap distance](figures/xmap_distance.png "xmap distance")
 
-The package also allows the testing of library length on forecast skill.
+As seen in the figure above, the forecast skill for X1 (X1 xmap X2) is much higher than the forecast skill for X2 (X2 xmap X1). This is to be expected as B12 was larger than B21. The larger forcing of X2 by X1 results in a higher forecast skill of X1 by using the weights from X2.
+
+skCCM also allows the testing of library length on forecast skill.
 
 ```python
 lib_lens = np.arange(10,ts_length,ts_length/20) #library lengths
@@ -68,7 +70,9 @@ sc1, sc2 = CCM.predict_causation_lib_len(X1,y1,X2,y2,lib_lens)
 
 ![library length](figures/xmap_lib_len.png "library length")
 
-For completeness, we also reproduce figure 3B from the paper.
+The four plots above show the same pattern with `X1 xmap X2` being greater than `X2 xmap X1` for all forecast distances.
+
+For completeness, we also reproduce figure 3B from the paper where the color represents the forecast skill of `X2 xmap X1` minus `X1 xmap X2`. This results in large values when B21 is large and B12 is small. Similarly, it results in smaller values when B12 is large and B21 is small.
 
 ![library length](figures/xmap_changingB.png "library length")
 
