@@ -54,7 +54,7 @@ Now that the time series has been embedded, we can now do the convergent cross m
 
 ```python
 CCM = ccm.ccm()
-sc1, sc2 = CCM.predict_causation(X1,y1,X2,y2)
+x1_xmap_x2, x2_xmap_x1 = CCM.predict_causation(X1,y1,X2,y2)
 ```
 
 ![xmap distance](figures/xmap_distance.png "xmap distance")
