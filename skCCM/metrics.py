@@ -13,7 +13,7 @@ def corrCoef(preds,actual):
 	----------
 
 	preds : array shape (num samples,num targets)
-		
+
 	test : array of shape (num samples, num targets)
 		actual values from the testing set
 
@@ -22,12 +22,12 @@ def corrCoef(preds,actual):
 
 	cc : float
 		Returns the correlation coefficient
-	"""
+    """
 
 	cc = np.corrcoef(preds,actual)[0,1]
-	
+
 	return cc
-	
+
 
 def varianceExplained(preds,actual):
 	"""
@@ -38,7 +38,7 @@ def varianceExplained(preds,actual):
 	----------
 
 	preds : array shape (num samples,num targets)
-		
+
 	actual : array of shape (num samples, num targets)
 		actual values from the testing set
 
@@ -49,7 +49,7 @@ def varianceExplained(preds,actual):
 		Returns the correlation coefficient
 	"""
 
-	
+
 	cc = np.var(preds - actual) / np.var(actual)
 
 	return cc
@@ -58,15 +58,15 @@ def varianceExplained(preds,actual):
 def score(preds,actual):
 	"""
 	The coefficient R^2 is defined as (1 - u/v), where u is the regression
-	sum of squares ((y_true - y_pred) ** 2).sum() and v is the residual 
-	sum of squares ((y_true - y_true.mean()) ** 2).sum(). Best possible 
+	sum of squares ((y_true - y_pred) ** 2).sum() and v is the residual
+	sum of squares ((y_true - y_true.mean()) ** 2).sum(). Best possible
 	score is 1.0, lower values are worse.
 
 	Parameters
 	----------
 
 	preds : array shape (num samples,num targets)
-		
+
 	test : array of shape (num samples, num targets)
 		actual values from the testing set
 
@@ -82,13 +82,3 @@ def score(preds,actual):
 	r2 = 1 - u/v
 
 	return r2
-
-
-
-
-
-
-
-
-
-

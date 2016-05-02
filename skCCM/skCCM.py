@@ -17,20 +17,25 @@ class ccm:
         Parameters
         ----------
         weights : weighting scheme for predictions
-        max_nn : nn to use for prediction
+            - exponential_paper : weighting scheme from paper
+        verbose : prints out calculation status
         """
 
         self.weights = weights
         self.verbose = verbose
 
-    def predict_causation(self,X1,y1,X2,y2,how='score'):
+    def predict_causation(self,X1,X2,near_neighs,how='score'):
         """
+        Wrapper to call all the other needed functions
+        X1 : embedded time series of shape (num_samps,embed_dim)
+        X2 : embedded time series of shape (num_samps,embed_dim)
+        near_neighs : how many near neighbors to use (int)
         how : how to score the predictions
             -'score'
             -'corrcoef'
         """
 
-        self.fit(X1,y1,X2,y2)
+        self.fit(X1,X2,near_neighs)
         self.dist_calc_to_self()
         self.weight_calc()
         self.predict()
@@ -39,51 +44,60 @@ class ccm:
 
         return sc1, sc2
 
-    def predict_causation_lib_len(self,X1,y1,X2,y2,lib_lens,how='score'):
-
-        s_shape = (len(lib_lens),y1.shape[1])
+    def predict_causation_lib_len(self,X1,X2,lib_lens,near_neighs,how='score'):
+        """
+        Wrapper for predicting causation as a function of library length.
+        X1 : embedded time series of shape (num_samps,embed_dim)
+        X2 : embedded time series of shape (num_samps,embed_dim)
+        lib_lens : which library lengths to use for prediction
+        near_neighs : how many near neighbors to use (int)
+        how : how to score the predictions
+            -'score'
+            -'corrcoef'
+        """
+        s_shape = (len(lib_lens),)
         sc1_store = np.empty(s_shape)
         sc2_store = np.empty(s_shape)
-        
+
         for ii,lib in enumerate(lib_lens):
 
-            self.fit(X1[0:lib],
-                     y1[0:lib],
-                     X2[0:lib],
-                     y2[0:lib])
+            self.fit(X1[0:lib],X2[0:lib],near_neighs)
             self.dist_calc_to_self()
             self.weight_calc()
             self.predict()
 
             sc1, sc2 = self.score(how)
-            sc1_store[ii,:] = sc1
-            sc2_store[ii,:] = sc2
+            sc1_store[ii] = sc1
+            sc2_store[ii] = sc2
 
         return sc1_store, sc2_store
 
-    def fit(self,X1,y1,X2,y2):
+    def fit(self,X1,X2,near_neighs):
         """
-        X1 : 2D array (nsamples, nfeatures)
-        X2 : 2D array (nsamples, nfeatures)
+        Initialize the data for ccm.
+
+        X1 : embedded time series of shape (num_samps,embed_dim)
+        X2 : embedded time series of shape (num_samps,embed_dim)
+        near_neighs : number of near neighbors to use
         """
         self.X1 = X1
-        self.y1 = y1
         self.X2 = X2
-        self.y2 = y2
 
-        self.knn1 = neighbors.KNeighborsRegressor(len(X1)) 
+        self.y1 = X1
+        self.y2 = X2
 
-        self.knn2 = neighbors.KNeighborsRegressor(len(X2))
+        self.knn1 = neighbors.KNeighborsRegressor(near_neighs)
+        self.knn2 = neighbors.KNeighborsRegressor(near_neighs)
 
-        self.knn1.fit(X1, y1)
-        self.knn2.fit(X2, y2)
+        self.knn1.fit(X1, X1)
+        self.knn2.fit(X2, X2)
 
 
     def dist_calc_to_self(self):
         """
         Calculates the distance from X1 to X1 and X2 to X2.
 
-        Note: Scrapes off the closest point, since that is the 
+        Note: Scrapes off the closest point, since that is the
         distance to itself. For example d1[:,1:]
 
         Returns
@@ -96,7 +110,7 @@ class ccm:
 
         d1,i1 = self.knn1.kneighbors(self.X1)
         d2,i2 = self.knn2.kneighbors(self.X2)
-        
+
         self.dist1 = d1[:,1:]
         self.ind1 = i1[:,1:]
 
@@ -104,19 +118,17 @@ class ccm:
         self.ind2 = i2[:,1:]
 
         if self.verbose: print("distances calculated")
-        
+
 
     def weight_calc(self):
         """
         Calculates the weights based on the distances.
-
-        d : matrix containing distances
         """
         d1 = self.dist1
         d2 = self.dist2
 
         if self.weights is 'linear':
-            
+
             numer_w1 = 1./d1
             denom_w1 = np.sum(numer_w1, axis=1)
 
@@ -148,27 +160,27 @@ class ccm:
         self.W1 = numer_w1/denom_w1[:,np.newaxis]
 
         self.W2 = numer_w2/denom_w2[:,np.newaxis]
-        
+
 
         if self.verbose: print("weights calculated")
 
     def predict(self):
         """
-        Make a prediction for a certain value of near neighbors
+        Make a prediction for a certain number of near neighbors
         """
 
         neigh_ind1 = self.ind1
         neigh_ind2 = self.ind2
 
-        y1_pred = np.empty((self.W1.shape[0], self.y1.shape[1]), dtype=np.float)
-        y2_pred = np.empty((self.W2.shape[0], self.y2.shape[1]), dtype=np.float)
+        y1_pred = np.empty((self.X1.shape[0], self.X1.shape[1]), dtype=np.float)
+        y2_pred = np.empty((self.X2.shape[0], self.X2.shape[1]), dtype=np.float)
 
         for j in range(self.y1.shape[1]):
-            
+
             #flip the weights and indices
             y1_pred[:, j] = np.sum(self.y1[neigh_ind2, j] * self.W2, axis=1)
             y2_pred[:, j] = np.sum(self.y2[neigh_ind1, j] * self.W1, axis=1)
-        
+
         self.y1_pred = y1_pred
         self.y2_pred = y2_pred
 
@@ -177,6 +189,10 @@ class ccm:
     def score(self,how='score'):
         """
         Evalulate the predictions
+
+        how : how to score the predictions
+            -'score'
+            -'corrcoef'
         """
 
         num_preds = self.y1.shape[1]
@@ -197,7 +213,7 @@ class ccm:
                 sc1[0,ii] = mets.corrcoef(p1,self.y1[:,ii])
                 sc2[0,ii] = mets.corrcoef(p2,self.y2[:,ii])
 
-        return sc1, sc2
+        return np.mean(sc1,axis=1), np.mean(sc2,axis=1)
 
 
 class embed:
@@ -213,16 +229,12 @@ class embed:
 
     def mutual_information(self,max_lag):
         """
-        Calculates the mutual information between the an unshifted time series and 
-        a shifted time series. Utilizes scikit-learn's implementation of the mutual
-        information found in sklearn.metrics.
+        Calculates the mutual information between the an unshifted time series
+        and a shifted time series. Utilizes scikit-learn's implementation of
+        the mutual information found in sklearn.metrics.
 
         Parameters
         ----------
-
-        X : 1-D array
-            time series that is to be shifted over
-
         max_lag : integer
             maximum amount to shift the time series
 
@@ -269,9 +281,10 @@ class embed:
 
 
 
-    def embed_vectors_1d(self,lag,embed,predict):
+    def embed_vectors_1d(self,lag,embed):
         """
-        Embeds vectors from a two dimensional image in m-dimensional space.
+        Embeds vectors from a one dimensional time series in
+        m-dimensional space.
 
         Parameters
         ----------
@@ -283,7 +296,7 @@ class embed:
 
         embed : int
             embedding dimension, how many lag values to take
-            
+
         predict : int
             distance to forecast (see example)
 
@@ -291,29 +304,24 @@ class embed:
         Returns
         -------
         features : array of shape [num_vectors,embed]
-            A 2-D array containing all of the embedded vectors  
-
-        targets : array of shape [num_vectors,predict]
-            A 2-D array containing the evolution of the embedded vectors
+            A 2-D array containing all of the embedded vectors
 
         Example
         -------
         X = [0,1,2,3,4,5,6,7,8,9,10]
-        
+
         em = 3
         lag = 2
         predict=3
 
         returns:
         features = [[0,2,4], [1,3,5], [2,4,6], [3,5,7]]
-        targets = [[5,6,7], [6,7,8], [7,8,9], [8,9,10]]
         """
 
         tsize = self.X.shape[0]
-        t_iter = tsize-predict-(lag*(embed-1))
+        t_iter = tsize-(lag*(embed-1))
 
         features = np.zeros((t_iter,embed))
-        targets = np.zeros((t_iter,predict))
 
         for ii in range(t_iter):
 
@@ -321,25 +329,6 @@ class embed:
 
             part = self.X[ii : end_val]
 
-            features[ii,:] = part[::(lag)]
-            targets[ii,:] = self.X[end_val:end_val+predict]
-        return features, targets
+            features[ii,:] = part[::lag]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return features
