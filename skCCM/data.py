@@ -22,7 +22,7 @@ from scipy import integrate
 
 def coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
     """
-    Coupled logistic map
+    Coupled logistic map.
 
     Parameters
     ----------
@@ -68,7 +68,8 @@ def coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
 
 def driven_rand_logistic(rx2, b12, ts_length,random_start=False):
     """
-    Logistic map with random forcing
+    Logistic map with random forcing. x1 is the random array and x2 is the
+	logistic map.
 
     Parameters
     ----------
@@ -84,9 +85,9 @@ def driven_rand_logistic(rx2, b12, ts_length,random_start=False):
     Returns
     -------
     x1 : array
-        array of length (ts_length,) that stores the values of the x series
+        array of length (ts_length,)
     x2 : array
-        array of length (ts_length,) that stores the values of the y series
+        array of length (ts_length,)
     """
 
     x1 = np.random.rand(ts_length)*.4

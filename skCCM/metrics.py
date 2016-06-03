@@ -5,7 +5,7 @@ Metrics for scoring predictions from CCM
 import numpy as np
 from scipy import stats as stats
 
-def corrCoef(preds,actual):
+def corrcoef(preds,actual):
 	"""
 	Correlation Coefficient of between predicted values and actual values
 

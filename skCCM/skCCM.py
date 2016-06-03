@@ -1,3 +1,21 @@
+"""
+Data for analyzing causality.
+By Nick Cortale
+
+Classes:
+	ccm
+	embed
+
+Paper:
+Detecting Causality in Complex Ecosystems
+George Sugihara et al. 2012
+
+Thanks to Kenneth Ells and Dylan McNamara
+
+TODO: This can be made way faster (I think) by only calculting the distances once and then
+Chopping it to a specific library length.
+"""
+
 
 
 import numpy as np
@@ -7,24 +25,30 @@ import metrics as mets
 
 
 
+
 class ccm:
 	"""
 	Convergent cross mapping for two embedded time series
 	"""
 
-	def __init__(self, weights='exponential_paper',verbose=False):
+	def __init__(self, weights='exponential_paper', verbose=False,
+				score_metric='score' ):
 		"""
 		Parameters
 		----------
 		weights : weighting scheme for predictions
 		    - exponential_paper : weighting scheme from paper
 		verbose : prints out calculation status
+		score : how to score the predictions
+			-'score'
+			-'corrcoef'
 		"""
 
 		self.weights = weights
 		self.verbose = verbose
+		self.score_metric = score_metric
 
-	def predict_causation(self,X1,X2,near_neighs,how='score'):
+	def predict_causation(self,X1_train,X2_train,X1_test,X2_test):
 		"""
 		Wrapper to call all the other needed functions
 		X1 : embedded time series of shape (num_samps,embed_dim)
@@ -35,16 +59,13 @@ class ccm:
 		-'corrcoef'
 		"""
 
-		self.fit(X1,X2,near_neighs)
-		self.dist_calc_to_self()
-		self.weight_calc()
-		self.predict()
-
-		sc1, sc2 = self.score(how)
+		self.fit(X1_train,X2_train)
+		self.predict(X1_test, X2_test)
+		sc1, sc2 = self.score()
 
 		return sc1, sc2
 
-	def predict_causation_lib_len(self,X1,X2,lib_lens,near_neighs,how='score'):
+	def predict_causation_lib_len(self,X1_train,X2_train,X1_test,X2_test,lib_lens):
 		"""
 		Wrapper for predicting causation as a function of library length.
 		X1 : embedded time series of shape (num_samps,embed_dim)
@@ -55,77 +76,76 @@ class ccm:
 			-'score'
 			-'corrcoef'
 		"""
-		s_shape = (len(lib_lens),)
-		sc1_store = np.empty(s_shape)
-		sc2_store = np.empty(s_shape)
+
+		sc1_store = np.zeros(len(lib_lens))
+		sc2_store = np.zeros(len(lib_lens))
 
 		for ii,lib in enumerate(lib_lens):
 
-			self.fit(X1[0:lib],X2[0:lib],near_neighs)
-			self.dist_calc_to_self()
-			self.weight_calc()
-			self.predict()
+			self.fit(X1_train[0:lib],X2_train[0:lib])
+			self.predict(X1_test, X2_test)
+			sc1, sc2 = self.score()
 
-			sc1, sc2 = self.score(how)
 			sc1_store[ii] = sc1
 			sc2_store[ii] = sc2
 
 		return sc1_store, sc2_store
 
-	def fit(self,X1,X2,near_neighs):
+	def fit(self,X1_train,X2_train):
 		"""
-		Initialize the data for ccm.
+		Fit the training data for ccm. Amount of near neighbors is set to be
+		embedding dimension plus one. Creates seperate near neighbor regressors
+		for X1 and X2 independently. Also Calculates the distances to each
+		sample.
 
 		X1 : embedded time series of shape (num_samps,embed_dim)
 		X2 : embedded time series of shape (num_samps,embed_dim)
 		near_neighs : number of near neighbors to use
 		"""
-		self.X1 = X1
-		self.X2 = X2
 
-		self.y1 = X1
-		self.y2 = X2
+		# Save X1_train and X2_train for prediction later. Confusing,
+		# but we need to make predictions about our testing set using these.
+		self.X1_train = X1_train
+		self.X2_train = X2_train
+
+		near_neighs = X1_train.shape[1] + 1
 
 		self.knn1 = neighbors.KNeighborsRegressor(near_neighs)
 		self.knn2 = neighbors.KNeighborsRegressor(near_neighs)
 
-		self.knn1.fit(X1, X1)
-		self.knn2.fit(X2, X2)
+		self.knn1.fit(X1_train, X1_train)
+		self.knn2.fit(X2_train, X2_train)
 
 
-	def dist_calc_to_self(self):
+	def dist_calc(self,X1_test,X2_test):
 		"""
-		Calculates the distance from X1 to X1 and X2 to X2.
-
-		Note: Scrapes off the closest point, since that is the
-		distance to itself. For example d1[:,1:]
+		Calculates the distance from X1_test to X1_train and X2_test to
+		X2_train.
 
 		Returns
 		-------
-		self.dist1 : distance from X1 to X1
-		self.ind1 : indices that correspond to the closest
-		self.dist2 : distance from X2 to X2
-		self.ind2 : indices that correspond to the closest
+		dist1 : distance from X1_train to X1_test
+		ind1 : indices that correspond to the closest
+		dist2 : distance from X2_train to X2_test
+		ind2 : indices that correspond to the closest
 		"""
 
-		d1,i1 = self.knn1.kneighbors(self.X1)
-		d2,i2 = self.knn2.kneighbors(self.X2)
-
-		self.dist1 = d1[:,1:]
-		self.ind1 = i1[:,1:]
-
-		self.dist2 = d2[:,1:]
-		self.ind2 = i2[:,1:]
+		dist1,ind1 = self.knn1.kneighbors(X1_test)
+		dist2,ind2 = self.knn2.kneighbors(X2_test)
 
 		if self.verbose: print("distances calculated")
 
+		return dist1, ind1, dist2, ind2
 
-	def weight_calc(self):
+
+	def weight_calc(self,d1,d2):
 		"""
 		Calculates the weights based on the distances.
+		Parameters
+		----------
+		d1 : distances from X1_train to X1_test
+		d2 : distances from X2_train to X2_test
 		"""
-		d1 = self.dist1
-		d2 = self.dist2
 
 		if self.weights is 'linear':
 
@@ -156,37 +176,46 @@ class ccm:
 			numer_w2 = np.exp(-d2/norm2)
 			denom_w2 = np.sum(numer_w2,axis=1)
 
-
-		self.W1 = numer_w1/denom_w1[:,np.newaxis]
-
-		self.W2 = numer_w2/denom_w2[:,np.newaxis]
-
+		W1 = numer_w1/denom_w1[:,np.newaxis]
+		W2 = numer_w2/denom_w2[:,np.newaxis]
 
 		if self.verbose: print("weights calculated")
 
-	def predict(self):
+		return W1, W2
+
+	def predict(self,X1_test,X2_test):
 		"""
-		Make a prediction for a certain number of near neighbors
+		Make a prediction
+
+		Parameters
+		----------
+		X1 : test set
+		X2 : test set
+
 		"""
+		#store X1_test and X2_test for use later
+		self.X1_test = X1_test
+		self.X2_test = X2_test
 
-		neigh_ind1 = self.ind1
-		neigh_ind2 = self.ind2
+		#calculate the distances and weights
+		dist1, ind1, dist2, ind2 = self.dist_calc(X1_test,X2_test)
+		W1, W2 = self.weight_calc(dist1,dist2)
 
-		y1_pred = np.empty((self.X1.shape[0], self.X1.shape[1]), dtype=np.float)
-		y2_pred = np.empty((self.X2.shape[0], self.X2.shape[1]), dtype=np.float)
+		X1_pred = np.empty(X1_test.shape, dtype=np.float)
+		X2_pred = np.empty(X2_test.shape, dtype=np.float)
 
-		for j in range(self.y1.shape[1]):
+		for j in range(self.X1_train.shape[1]):
 
 			#flip the weights and indices
-			y1_pred[:, j] = np.sum(self.y1[neigh_ind2, j] * self.W2, axis=1)
-			y2_pred[:, j] = np.sum(self.y2[neigh_ind1, j] * self.W1, axis=1)
+			X1_pred[:, j] = np.sum(self.X1_train[ind2, j] * W2, axis=1)
+			X2_pred[:, j] = np.sum(self.X2_train[ind1, j] * W1, axis=1)
 
-		self.y1_pred = y1_pred
-		self.y2_pred = y2_pred
+		self.X1_pred = X1_pred
+		self.X2_pred = X2_pred
 
 		if self.verbose: print("predictions made")
 
-	def score(self,how='score'):
+	def score(self):
 		"""
 		Evalulate the predictions
 
@@ -195,23 +224,23 @@ class ccm:
 			-'corrcoef'
 		"""
 
-		num_preds = self.y1.shape[1]
+		num_preds = self.X1_pred.shape[1]
 
 		sc1 = np.empty((1,num_preds))
 		sc2 = np.empty((1,num_preds))
 
 		for ii in range(num_preds):
 
-			p1 = self.y1_pred[:,ii]
-			p2 = self.y2_pred[:,ii]
+			p1 = self.X1_pred[:,ii]
+			p2 = self.X2_pred[:,ii]
 
-			if how == 'score':
-				sc1[0,ii] = mets.score(p1,self.y1[:,ii])
-				sc2[0,ii] = mets.score(p2,self.y2[:,ii])
+			if self.score_metric == 'score':
+				sc1[0,ii] = mets.score(p1,self.X1_test[:,ii])
+				sc2[0,ii] = mets.score(p2,self.X2_test[:,ii])
 
-			if how == 'corrcoef':
-				sc1[0,ii] = mets.corrcoef(p1,self.y1[:,ii])
-				sc2[0,ii] = mets.corrcoef(p2,self.y2[:,ii])
+			if self.score_metric == 'corrcoef':
+				sc1[0,ii] = mets.corrcoef(p1,self.X1_test[:,ii])
+				sc2[0,ii] = mets.corrcoef(p2,self.X2_test[:,ii])
 
 		return np.mean(sc1,axis=1), np.mean(sc2,axis=1)
 
