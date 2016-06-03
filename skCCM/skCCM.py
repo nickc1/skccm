@@ -216,7 +216,7 @@ class ccm:
 		return np.mean(sc1,axis=1), np.mean(sc2,axis=1)
 
 
-	class embed:
+class embed:
 
 	def __init__(self,X):
 		"""
