@@ -21,7 +21,7 @@ Chopping it to a specific library length.
 import numpy as np
 from sklearn import neighbors
 from sklearn import metrics
-import metrics as mets
+import skCCM.metrics as mets
 
 
 
@@ -251,7 +251,7 @@ class embed:
 		"""
 		Parameters
 		----------
-		X : series, 2d array, or 3d array to be embedded
+		X : series or dataframe,
 		"""
 
 		self.X = X
