@@ -21,7 +21,8 @@ Chopping it to a specific library length.
 import numpy as np
 from sklearn import neighbors
 from sklearn import metrics
-import skCCM.metrics as mets
+import skCCM.utilities as ut
+import pandas as pd
 
 
 
@@ -32,7 +33,7 @@ class ccm:
 	"""
 
 	def __init__(self, weights='exponential_paper', verbose=False,
-				score_metric='score' ):
+				score_metric='corrcoef' ):
 		"""
 		Parameters
 		----------
@@ -48,28 +49,13 @@ class ccm:
 		self.verbose = verbose
 		self.score_metric = score_metric
 
-	def predict_causation(self,X1_train,X2_train,X1_test,X2_test):
-		"""
-		Wrapper to call all the other needed functions
-		X1 : embedded time series of shape (num_samps,embed_dim)
-		X2 : embedded time series of shape (num_samps,embed_dim)
-		near_neighs : how many near neighbors to use (int)
-		how : how to score the predictions
-		-'score'
-		-'corrcoef'
-		"""
-
-		self.fit(X1_train,X2_train)
-		self.predict(X1_test, X2_test)
-		sc1, sc2 = self.score()
-
-		return sc1, sc2
-
-	def predict_causation_lib_len(self,X1_train,X2_train,X1_test,X2_test,lib_lens):
+	def predict_causation(self,X1_train,X1_test,X2_train,X2_test,lib_lens):
 		"""
 		Wrapper for predicting causation as a function of library length.
-		X1 : embedded time series of shape (num_samps,embed_dim)
-		X2 : embedded time series of shape (num_samps,embed_dim)
+		X1_train : embedded train series of shape (num_samps,embed_dim)
+		X2_train : embedded train series of shape (num_samps,embed_dim)
+		X1_test : embedded test series of shape (num_samps, embed_dim)
+		X2_test : embedded test series of shape (num_samps, embed_dim)
 		lib_lens : which library lengths to use for prediction
 		near_neighs : how many near neighbors to use (int)
 		how : how to score the predictions
@@ -235,12 +221,12 @@ class ccm:
 			p2 = self.X2_pred[:,ii]
 
 			if self.score_metric == 'score':
-				sc1[0,ii] = mets.score(p1,self.X1_test[:,ii])
-				sc2[0,ii] = mets.score(p2,self.X2_test[:,ii])
+				sc1[0,ii] = ut.score(p1,self.X1_test[:,ii])
+				sc2[0,ii] = ut.score(p2,self.X2_test[:,ii])
 
 			if self.score_metric == 'corrcoef':
-				sc1[0,ii] = mets.corrcoef(p1,self.X1_test[:,ii])
-				sc2[0,ii] = mets.corrcoef(p2,self.X2_test[:,ii])
+				sc1[0,ii] = ut.corrcoef(p1,self.X1_test[:,ii])
+				sc2[0,ii] = ut.corrcoef(p2,self.X2_test[:,ii])
 
 		return np.mean(sc1,axis=1), np.mean(sc2,axis=1)
 
@@ -253,8 +239,40 @@ class embed:
 		----------
 		X : series or dataframe,
 		"""
+		if type(X) is pd.pandas.core.frame.DataFrame:
+			self.df = X
+		else:
+			self.X = X
 
-		self.X = X
+
+	def df_mutual_information(self,max_lag):
+		"""
+		Calculates the mutual information along each row of a time series.
+		Ensure that the time series is continuous in time and sampled regularly.
+		You can resample it hourly, daily, minutely etc. if needed.
+
+		Parameters
+		----------
+		max_lag : int
+			maximum amount to shift the time series
+		Returns
+		-------
+		mi : dataframe, shape(max_lag,num_cols)
+			columns are the columns of the original dataframe with rows being
+			the mutual information
+		"""
+
+		cols = self.df.columns
+		mi = np.empty((max_lag, len(cols)))
+
+		for i,col in enumerate(cols):
+
+			self.X = self.df[col].values
+			mi[:,i] = self.mutual_information(max_lag)
+
+		mi = pd.DataFrame(mi,columns=cols)
+
+		return mi
 
 	def mutual_information(self,max_lag):
 		"""

@@ -82,3 +82,46 @@ def score(preds,actual):
 	r2 = 1 - u/v
 
 	return r2
+
+
+def feature_scale(X):
+	"""
+	Scales the features between 0 and 1
+	"""
+
+	top = X - np.min(X)
+	bot = np.max(X) - np.min(X)
+
+	return top/bot
+
+def train_test_split(x1,x2,percent=.75):
+	"""
+	Splits the embedded time series into a testing set and training set for
+	use the ccm predict_casuation call. Returns x1tr, x1te, x2tr, x2te.
+
+	Parameters
+	----------
+	x1 : embedded time series of shape (n_samps,embed_dim)
+	x2 : embedded time series of shape (n_samps,embed_dim)
+	percent : what percent to use for training set
+
+	Returns
+	-------
+	x1tr:
+	x1te:
+	x2tr:
+	x2te:
+	"""
+
+	if len(x1) != len(x2):
+		print("X1 and X2 are different lengths!")
+
+	split = int(len(x1)*percent)
+
+	x1tr = x1[:split]
+	x2tr = x2[:split]
+
+	x1te = x1[split:]
+	x2te = x2[split:]
+
+	return x1tr, x1te, x2tr, x2te
