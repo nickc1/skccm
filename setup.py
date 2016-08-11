@@ -2,7 +2,7 @@ import os
 from distutils.core import setup
 
 # Get version and release info, which is all stored in shablona/version.py
-ver_file = os.path.join('shablona', 'version.py')
+ver_file = os.path.join('skCCM', 'version.py')
 with open(ver_file) as f:
     exec(f.read())
 
@@ -20,7 +20,7 @@ opts = dict(name=NAME,
             platforms=PLATFORMS,
             version=VERSION,
             packages=PACKAGES,
-            package_data=PACKAGE_DATA,
+            #package_data=PACKAGE_DATA,
             requires=REQUIRES)
 
 
