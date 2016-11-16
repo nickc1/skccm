@@ -1,0 +1,28 @@
+Metadata-Version: 1.1
+Name: skCCM
+Version: 0.1.dev0
+Summary: skCCM: Convergent Cross Mapping with a simple api
+Home-page: https://github.com/NickC1/skCCM
+Author: Nick Cortale
+Author-email: nickcortale@gmail.com
+License: MIT
+Download-URL: https://github.com/NickC1/skCCM/tarball/0.1
+Description: 
+        
+        skCCM
+        ========
+        
+        This package is an implementation of convergent cross mapping (CCM)
+        using scikit-learn's api. More specifically it is an implementation from the
+        paper, **Detecting Causality in Complex Ecosystems**. It reconstructs
+        phase spaces to analyze the effects of one system on the other.
+        
+Platform: OS Independent
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering
+Requires: numpy

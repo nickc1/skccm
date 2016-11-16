@@ -1,1 +1,1 @@
-from .skCCM import ccm, embed
+from .skCCM import CCM, Embed

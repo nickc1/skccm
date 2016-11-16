@@ -93,6 +93,30 @@ def feature_scale(X):
 	bot = np.max(X) - np.min(X)
 
 	return top/bot
+def in_library_len(ind,dist,lib_len,keep=4):
+	"""
+	Returns the filtered indices and distances that are in that specific
+	library length. This allows the distances to only be calculated once.
+	ind : np.array, indices to be filtered
+	dist : np.array, distances to be filtered
+	val : what indices to keep
+	"""
+
+
+	# mask = ind < lib_len
+	# filt_ind = ind[mask].reshape(-1,lib_len)
+	# filt_dist = dist[mask].reshape(-1,lib_len)
+
+	r,c = np.where(ind<lib_len)
+
+	r = r.reshape(-1,lib_len)[:,:keep].ravel()
+	c = c.reshape(-1,lib_len)[:,:keep].ravel()
+
+	filt_ind = ind[r,c].reshape(-1,keep)
+	filt_dist = dist[r,c].reshape(-1,keep)
+
+	return filt_ind, filt_dist
+
 
 def train_test_split(x1,x2,percent=.75):
 	"""
@@ -125,3 +149,23 @@ def train_test_split(x1,x2,percent=.75):
 	x2te = x2[split:]
 
 	return x1tr, x1te, x2tr, x2te
+
+
+def exp_weight(X, weights='exponential_paper'):
+	"""
+	Calculates the weights based on the distances.
+	Parameters
+	----------
+	d1 : distances from X1_train to X1_test
+	d2 : distances from X2_train to X2_test
+	"""
+
+	#add a small number so it stays defined
+	norm = X[:,[0]] +.00001
+
+	numer = np.exp(-X/norm)
+	denom = np.sum(numer,axis=1,keepdims=True)
+
+	W = numer/denom
+
+	return W
