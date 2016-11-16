@@ -12,8 +12,10 @@ George Sugihara et al. 2012
 
 Thanks to Kenneth Ells and Dylan McNamara
 
-TODO: This can be made way faster (I think) by only calculting the distances once and then
-Chopping it to a specific library length.
+Notes:
+Originally I thought this can be made way faster by only calculting the
+distances once and then chopping it to a specific library length. It turns out
+that calculating the distances is cheaper than filtering the indices.
 """
 
 
@@ -33,46 +35,22 @@ class CCM:
 	Convergent cross mapping for two embedded time series
 	"""
 
-	def __init__(self, weights='exponential_paper', verbose=False,
-				score_metric='corrcoef' ):
+	def __init__(self, weights='exp', score_metric='corrcoef', verbose=False):
 		"""
 		Parameters
 		----------
 		weights : weighting scheme for predictions
-		    - exponential_paper : weighting scheme from paper
-		verbose : prints out calculation status
+		    - exp : exponential weighting
 		score : how to score the predictions
 			-'score'
 			-'corrcoef'
+		verbose : prints out calculation status
 		"""
 
 		self.weights = weights
-		self.verbose = verbose
 		self.score_metric = score_metric
+		self.verbose = verbose
 
-	def predict_causation(self,X1_train,X1_test,X2_train,X2_test,lib_lens):
-		"""
-		Wrapper for predicting causation as a function of library length.
-		X1_train : embedded train series of shape (num_samps,embed_dim)
-		X2_train : embedded train series of shape (num_samps,embed_dim)
-		X1_test : embedded test series of shape (num_samps, embed_dim)
-		X2_test : embedded test series of shape (num_samps, embed_dim)
-		lib_lens : which library lengths to use for prediction
-		"""
-
-		sc1_store = np.zeros(len(lib_lens))
-		sc2_store = np.zeros(len(lib_lens))
-
-		for ii,lib in enumerate(lib_lens):
-
-			self.fit(X1_train[0:lib],X2_train[0:lib])
-			self.predict(X1_test, X2_test)
-			sc1, sc2 = self.score()
-
-			sc1_store[ii] = sc1
-			sc2_store[ii] = sc2
-
-		return sc1_store, sc2_store
 
 	def fit(self,X1_train,X2_train):
 		"""
@@ -90,70 +68,40 @@ class CCM:
 		self.X1_train = X1_train
 		self.X2_train = X2_train
 
+		#to sorround a point, there must be ndim + 1 points
 		near_neighs = X1_train.shape[1] + 1
 
-		self.knn1 = neighbors.KNeighborsRegressor(len(X1_train))
-		self.knn2 = neighbors.KNeighborsRegressor(len(X1_train))
+		self.knn1 = neighbors.KNeighborsRegressor(near_neighs)
+		self.knn2 = neighbors.KNeighborsRegressor(near_neighs)
 
-		self.knn1.fit(X1_train, X1_train)
-		self.knn2.fit(X2_train, X2_train)
-
-
-	def dist_calc(self,X1_test,X2_test):
-		"""
-		Calculates the distance from X1_test to X1_train and X2_test to
-		X2_train.
-
-		Returns
-		-------
-		dist1 : distance from X1_train to X1_test
-		ind1 : indices that correspond to the closest
-		dist2 : distance from X2_train to X2_test
-		ind2 : indices that correspond to the closest
-		"""
-
-		dist1,ind1 = self.knn1.kneighbors(X1_test)
-		dist2,ind2 = self.knn2.kneighbors(X2_test)
-
-		if self.verbose: print("distances calculated")
-
-		return dist1, ind1, dist2, ind2
-
-	def predict_2(self,X1_test,X2_test,lib_lengths=None):
+	def predict(self,X1_test,X2_test,lib_lengths):
 		"""
 		Make a prediction
 
 		Parameters
 		----------
-		X1 : test set
-		X2 : test set
-
+		X1_test : test set
+		X2_test : test set
+		lib_lengths : list of library lengths to test
 		"""
-
-		# if lib lengths isnt defined, use all of the training set
-		if lib_lengths is None:
-			lib_lengths = [len(self.X1_train)]
 
 		#store X1_test and X2_test for use later
 		self.X1_test = X1_test
 		self.X2_test = X2_test
 
-		n_sorround = X1_test.shape[1] + 1  #number to sorround a point
-
 		X1_pred = []
 		X2_pred = []
 
-		x1_p = np.empty(X1_test.shape)
-		x2_p = np.empty(X2_test.shape)
-
-		self.knn1 = neighbors.KNeighborsRegressor(n_sorround)
-		self.knn2 = neighbors.KNeighborsRegressor(n_sorround)
 
 		for liblen in lib_lengths:
+
+			x1_p = np.empty(X1_test.shape)
+			x2_p = np.empty(X2_test.shape)
 
 			#keep only the indices that are less than library length
 			self.knn1.fit(self.X1_train[:liblen], self.X1_train[:liblen])
 			self.knn2.fit(self.X2_train[:liblen], self.X2_train[:liblen])
+
 			dist1,ind1 = self.knn1.kneighbors(X1_test)
 			dist2,ind2 = self.knn2.kneighbors(X2_test)
 
@@ -173,85 +121,8 @@ class CCM:
 		self.X1_pred = X1_pred
 		self.X2_pred = X2_pred
 
-		if self.verbose: print("predictions made")
-
 		return X1_pred, X2_pred
 
-
-
-
-	def predict(self,X1_test,X2_test,lib_lengths=None):
-		"""
-		Make a prediction
-
-		Parameters
-		----------
-		X1 : test set
-		X2 : test set
-
-		"""
-
-		# if lib lengths isnt defined, use all of the training set
-		if lib_lengths is None:
-			lib_lengths = [len(self.X1_train)]
-
-		#store X1_test and X2_test for use later
-		self.X1_test = X1_test
-		self.X2_test = X2_test
-
-		#calculate the distances and weights
-		dist1, ind1, dist2, ind2 = self.dist_calc(X1_test,X2_test)
-
-		n_sorround = X1_test.shape[1] + 1  #number to sorround a point
-
-		X1_pred = []
-		X2_pred = []
-
-		x1_p = np.empty(X1_test.shape)
-		x2_p = np.empty(X2_test.shape)
-
-
-		#flipping allows for a faster implentation as we can feed
-		# ut.in_libary_len smaller and smaller arrays
-
-		for liblen in lib_lengths[::-1]:
-
-			self.ind1 = ind1
-			#keep only the indices that are less than library length
-			t0 = time.time()
-			i_1, d_1 = ut.in_library_len(ind1, dist1, liblen, n_sorround)
-			i_2, d_2 = ut.in_library_len(ind2, dist2, liblen, n_sorround)
-			t1 = time.time()
-			print('ut.in_library:',np.around(t1-t0,4))
-
-
-			#i_1 = ind1[:,:n_sorround]
-			#i_2 = ind2[:,:n_sorround]
-			#d_1 = dist1[:,:n_sorround]
-			#d_2 = dist2[:,:n_sorround]
-
-			t0 = time.time()
-			for j in range(self.X1_train.shape[1]):
-
-				W1 = ut.exp_weight(d_1)
-				W2 = ut.exp_weight(d_2)
-
-				#flip the weights and indices
-				x1_p[:, j] = np.sum(self.X1_train[i_2, j] * W2, axis=1)
-				x2_p[:, j] = np.sum(self.X2_train[i_1, j] * W1, axis=1)
-			t1 = time.time()
-
-			#print('second_loop:',np.around(t1-t0,4))
-
-			X1_pred.append(x1_p)
-			X2_pred.append(x2_p)
-
-		self.X1_pred = X1_pred
-		self.X2_pred = X2_pred
-
-		if self.verbose: print("predictions made")
-
-		return X1_pred, X2_pred
 
 	def score(self,how='corrcoef'):
 		"""

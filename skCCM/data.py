@@ -195,3 +195,38 @@ def lagged_coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
         x2[i+1] = x2[i] * (rx2 - rx2 * x2[i] - b12 * x1[i])
 
     return x1,x2
+
+def lorenz(sz=10000,noise=0,max_t=100.):
+	"""
+	Integrates the lorenz equation defined in lorenz_deriv
+
+	Parameters
+	----------
+
+	sz : int
+		Length of the time series to be integrated
+
+	noise : float
+		Amplitude of noise to be added to the lorenz equation
+
+	max_t : float
+		Length of time to solve the lorenz equation over
+
+	Returns
+	-------
+
+	X : 1D array
+		Returns a 1D periodic equaiton of size (sz) with values between 0 and 1
+	"""
+
+
+	def lorenz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
+		x,y,z = xyz
+		return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
+
+
+	x0 = [1, 1, 1]  # starting vector
+	t = np.linspace(0, max_t, sz)  # one thousand time steps
+	X = integrate.odeint(lorenz_deriv, x0, t) + noise*np.random.rand(sz,3)
+
+	return X

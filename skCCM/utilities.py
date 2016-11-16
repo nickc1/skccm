@@ -93,29 +93,6 @@ def feature_scale(X):
 	bot = np.max(X) - np.min(X)
 
 	return top/bot
-def in_library_len(ind,dist,lib_len,keep=4):
-	"""
-	Returns the filtered indices and distances that are in that specific
-	library length. This allows the distances to only be calculated once.
-	ind : np.array, indices to be filtered
-	dist : np.array, distances to be filtered
-	val : what indices to keep
-	"""
-
-
-	# mask = ind < lib_len
-	# filt_ind = ind[mask].reshape(-1,lib_len)
-	# filt_dist = dist[mask].reshape(-1,lib_len)
-
-	r,c = np.where(ind<lib_len)
-
-	r = r.reshape(-1,lib_len)[:,:keep].ravel()
-	c = c.reshape(-1,lib_len)[:,:keep].ravel()
-
-	filt_ind = ind[r,c].reshape(-1,keep)
-	filt_dist = dist[r,c].reshape(-1,keep)
-
-	return filt_ind, filt_dist
 
 
 def train_test_split(x1,x2,percent=.75):
@@ -169,3 +146,97 @@ def exp_weight(X, weights='exponential_paper'):
 	W = numer/denom
 
 	return W
+
+def in_library_len(ind,dist,lib_len):
+	"""
+	Returns the filtered indices and distances that are in that specific
+	library length. This allows the distances to only be calculated once.
+	ind : np.array, indices to be filtered
+	dist : np.array, distances to be filtered
+	val : what indices to keep
+	"""
+
+
+	mask = ind < lib_len
+	filt_ind = ind[mask].reshape(-1,lib_len)
+	filt_dist = dist[mask].reshape(-1,lib_len)
+
+	# this was slower :(
+	# r,c = np.where(ind<lib_len)
+	#
+	# r = r.reshape(-1,lib_len)[:,:keep].ravel()
+	# c = c.reshape(-1,lib_len)[:,:keep].ravel()
+	#
+	# filt_ind = ind[r,c].reshape(-1,keep)
+	# filt_dist = dist[r,c].reshape(-1,keep)
+
+	return filt_ind, filt_dist
+
+def throw_out_nn_indices(dist,ind, Xind):
+	"""
+	Throw out near neighbor indices that are used to embed the time series.
+
+	dist : distances to all the near neighbors
+	ind : near neighbor indices
+	X : embedded X time series
+		This is used to calculate the indices. It assumes a sequential
+		embedding. For example: [[1,2],[3,4],...]
+	Xind : list of lists.
+		These are the conflicting indices that must be removed. These are
+		calcuated using conflicting_indices().
+	"""
+
+	ind_store = []
+	dist_store = []
+
+	#iterate through each row
+	for i in range(len(Xind)):
+
+		xrow = Xind[i]
+		indrow = ind[i]
+		distrow = dist[i]
+		mask = np.ones(len(indrow),dtype=bool)
+
+		for val in xrow:
+			mask[indrow == val] = False
+
+		ind_store.append( indrow[mask] )
+		dist_store.append(distrow[mask])
+
+	#keep up to the shortest mask. This is so that we can vstack them
+	ind_len = min( [len(m) for m in ind_store] )
+
+	#make all lists the same size for concatenation
+	ind_store = [m[:ind_len] for m in ind_store]
+	dist_store = [m[:ind_len] for m in dist_store]
+
+
+	ind_store = np.vstack(ind_store)
+	dist_store = np.vstack(dist_store)
+
+	return dist_store, ind_store
+
+def conflicting_indices(X):
+	"""
+	Finds where the indices are in the rest of feature matrix. This assures
+	that the correct indices are dropped.
+
+	X : The embed indices. This is the same shape as the actual embedded time
+		series.
+	"""
+
+	conf_ind = []
+	for i in range(len(X)):
+
+		inds = [] #where to store
+
+		#iterate through all other rows
+		for j in range(len(X)):
+
+			#check where they intersect
+			if len(set( X[i] ).intersection( X[j] ))>0:
+				inds.append(j)
+
+		conf_ind.append(inds)
+
+	return conf_ind

@@ -1,8 +1,5 @@
 """
-Reconstruction of the algorithm from the Sugihara paper. Use skCCM if you are
-looking to analyze a dataset. This is for comparing the results of skCCM to
-the actual implementation in the paper.
-
+Data for analyzing causality.
 By Nick Cortale
 
 Classes:
@@ -15,8 +12,10 @@ George Sugihara et al. 2012
 
 Thanks to Kenneth Ells and Dylan McNamara
 
-TODO: This can be made way faster (I think) by only calculting the distances once and then
-Chopping it to a specific library length.
+Notes:
+Originally I thought this can be made way faster by only calculting the
+distances once and then chopping it to a specific library length. It turns out
+that calculating the distances is cheaper than filtering the indices.
 """
 
 
@@ -26,64 +25,43 @@ from sklearn import neighbors
 from sklearn import metrics
 import skCCM.utilities as ut
 import pandas as pd
+import time
 
 
 
 
-class ccm:
+class CCM:
 	"""
 	Convergent cross mapping for two embedded time series
 	"""
 
-	def __init__(self, weights='exponential_paper', verbose=False,
-				score_metric='corrcoef' ):
+	def __init__(self, weights='exp', score_metric='corrcoef', verbose=False):
 		"""
 		Parameters
 		----------
 		weights : weighting scheme for predictions
-		    - exponential_paper : weighting scheme from paper
-		verbose : prints out calculation status
+		    - exp : exponential weighting
 		score : how to score the predictions
 			-'score'
 			-'corrcoef'
+		verbose : prints out calculation status
 		"""
 
 		self.weights = weights
-		self.verbose = verbose
 		self.score_metric = score_metric
+		self.verbose = verbose
 
-	def predict_causation(self,X1,X2,lib_lens):
-		"""
-		Wrapper for predicting causation as a function of library length.
-		X1 : embedded series of shape (num_samps,embed_dim)
-		X2 : embedded series of shape (num_samps,embed_dim)
-		lib_lens : which library lengths to use for prediction
-		"""
-
-		sc1_store = np.zeros(len(lib_lens))
-		sc2_store = np.zeros(len(lib_lens))
-
-		for ii,lib in enumerate(lib_lens):
-
-			self.fit(X1[0:lib],X2[0:lib])
-			self.predict(X1[0:lib], X2[0:lib])
-			sc1, sc2 = self.score()
-
-			sc1_store[ii] = sc1
-			sc2_store[ii] = sc2
-
-		return sc1_store, sc2_store
 
 	def fit(self,X1,X2):
 		"""
-		Fit the training data for ccm. Amount of near neighbors is set to be
-		embedding dimension plus one. Creates seperate near neighbor regressors
-		for X1 and X2 independently. Also Calculates the distances to each
-		sample.
+		Fit the training data for ccm. Creates seperate near neighbor regressors
+		for X1 and X2 independently.
 
 		X1 : embedded time series of shape (num_samps,embed_dim)
 		X2 : embedded time series of shape (num_samps,embed_dim)
-		near_neighs : number of near neighbors to use
+		near_neighs : string
+			- 'sorround' : this is what the paper uses
+			- 'all' : calculate the distance to all near neighbors
 		"""
 
 		# Save X1_train and X2_train for prediction later. Confusing,
@@ -91,145 +69,181 @@ class ccm:
 		self.X1 = X1
 		self.X2 = X2
 
-		near_neighs = X1.shape[1] + 1
+		#to sorround a point, there must be ndim + 1 points
+		# we add two here because the closest neighbor is itself. so that is
+		# going to be dropped.
+		near_neighs = X1.shape[1] + 2
 
 		self.knn1 = neighbors.KNeighborsRegressor(near_neighs)
 		self.knn2 = neighbors.KNeighborsRegressor(near_neighs)
 
-		self.knn1.fit(X1_train, X1_train)
-		self.knn2.fit(X2_train, X2_train)
-
-
-	def dist_calc(self,X1,X2):
-		"""
-		Calculates the distance from X1_test to X1_train and X2_test to
-		X2_train.
-
-		Returns
-		-------
-		dist1 : distance from X1_train to X1_test
-		ind1 : indices that correspond to the closest
-		dist2 : distance from X2_train to X2_test
-		ind2 : indices that correspond to the closest
-		"""
-
-		dist1,ind1 = self.knn1.kneighbors(X1)
-		dist2,ind2 = self.knn2.kneighbors(X2)
-
-		if self.verbose: print("distances calculated")
-
-		# need to strip off the distance to itself
-		return dist1[:,1:], ind1[:,1:], dist2[:,1:], ind2[:,1:]
-
-
-	def weight_calc(self,d1,d2):
-		"""
-		Calculates the weights based on the distances.
-		Parameters
-		----------
-		d1 : distances from X1_train to X1_test
-		d2 : distances from X2_train to X2_test
-		"""
-
-		if self.weights is 'linear':
-
-			numer_w1 = 1./d1
-			denom_w1 = np.sum(numer_w1, axis=1)
-
-			numer_w2 = 1./d2
-			denom_w2 = np.sum(numer_w2, axis=1)
-
-		elif self.weights is 'uniform':
-
-			numer_w1 = np.ones_like(d1)
-			denom_w1 = np.sum(np.ones_like(d1),axis=1)
-
-			numer_w2 = np.ones_like(d2)
-			denom_w2 = np.sum(np.ones_like(d2),axis=1)
-
-		elif self.weights is 'exponential_paper':
-
-			#add a small number so it stays defined
-			norm1 = d1[:,0].reshape(len(d1),1) +.00001
-
-			numer_w1 = np.exp(-d1/norm1)
-			denom_w1 = np.sum(numer_w1,axis=1)
-
-			norm2 = d2[:,0].reshape(len(d2),1) +.00001
-
-			numer_w2 = np.exp(-d2/norm2)
-			denom_w2 = np.sum(numer_w2,axis=1)
-
-		W1 = numer_w1/denom_w1[:,np.newaxis]
-		W2 = numer_w2/denom_w2[:,np.newaxis]
-
-		if self.verbose: print("weights calculated")
-
-		return W1, W2
-
-	def predict(self,X1,X2):
+	def predict_no_drop(self,lib_lengths):
 		"""
 		Make a prediction
 
 		Parameters
 		----------
-		X1 : test set
-		X2 : test set
-
+		X1_test : test set
+		X2_test : test set
+		lib_lengths : list of library lengths to test
 		"""
-		#store X1_test and X2_test for use later
-		self.X1_test = X1
-		self.X2_test = X2
 
-		#calculate the distances and weights
-		dist1, ind1, dist2, ind2 = self.dist_calc(X1,X2)
-		W1, W2 = self.weight_calc(dist1,dist2)
+		X1_pred = []
+		X2_pred = []
 
-		X1_pred = np.empty(X1_test.shape, dtype=np.float)
-		X2_pred = np.empty(X2_test.shape, dtype=np.float)
 
-		for j in range(self.X1_train.shape[1]):
+		for liblen in lib_lengths:
 
-			#flip the weights and indices
-			X1_pred[:, j] = np.sum(self.X1_train[ind2, j] * W2, axis=1)
-			X2_pred[:, j] = np.sum(self.X2_train[ind1, j] * W1, axis=1)
+			x1_p = np.empty(self.X1.shape)
+			x2_p = np.empty(self.X2.shape)
+
+			#keep only the indices that are less than library length
+			self.knn1.fit(self.X1[:liblen], self.X1[:liblen])
+			self.knn2.fit(self.X2[:liblen], self.X2[:liblen])
+
+			dist1,ind1 = self.knn1.kneighbors(self.X1)
+			dist2,ind2 = self.knn2.kneighbors(self.X2)
+
+			#drop indices and distances to themselves
+			dist1 = dist1[:,1:]
+			dist2 = dist2[:,1:]
+			ind1 = ind1[:,1:]
+			ind2 = ind2[:,1:]
+
+			for j in range(self.X1.shape[1]):
+
+				W1 = ut.exp_weight(dist1)
+				W2 = ut.exp_weight(dist2)
+
+				#flip the weights and indices
+				x1_p[:, j] = np.sum(self.X1[ind2, j] * W2, axis=1)
+				x2_p[:, j] = np.sum(self.X2[ind1, j] * W1, axis=1)
+
+			X1_pred.append(x1_p)
+			X2_pred.append(x2_p)
+
+		self.X1_pred = X1_pred
+		self.X2_pred = X2_pred
+
+		return X1_pred, X2_pred
+
+	def predict_drop_in_list(self,lib_lengths,emb_ind1,emb_ind2):
+		"""
+		Make a prediction, but the same indices cant be matched with each other.
+		Parameters
+		----------
+		lib_lengths : library lengths to Test
+		e_ind1 : indices of the first embed time series.
+		e_ind2 : indices of the second embed time series.
+		"""
+
+		X1_pred = []
+		X2_pred = []
+
+		x1_p = np.empty(self.X1.shape)
+		x2_p = np.empty(self.X2.shape)
+
+		#need to reset the class ot use all neighbors so that the appropriate
+		# neighbors can be dropped for each class
+		self.knn1 = neighbors.KNeighborsRegressor(len(self.X1))
+		self.knn2 = neighbors.KNeighborsRegressor(len(self.X2))
+
+		self.knn1.fit(self.X1, self.X1)
+		self.knn2.fit(self.X2, self.X2)
+
+		dist1,ind1 = self.knn1.kneighbors(self.X1)
+		dist2,ind2 = self.knn2.kneighbors(self.X2)
+
+		#find the conflicting indices
+		conf1 = ccm.utilities.conflicting_indices(emb_ind1)
+		conf2 = ccm.utilities.conflicting_indices(emb_ind2)
+
+
+		#throw out the indices that are in the embedding
+		dist1, ind1 = ut.throw_out_nn_indices(dist1,ind1,conf)
+		dist2, ind2 = ut.throw_out_nn_indices(dist2,ind2,conf)
+
+		#flipping allows for a faster implentation as we can feed
+		# ut.in_libary_len smaller and smaller arrays
+		for liblen in lib_lengths[::-1]:
+
+
+			#keep only the indices that are less than library length
+			#t0 = time.time()
+			ind1, dist1 = ut.in_library_len(ind1, dist1, liblen)
+			ind2, dist2 = ut.in_library_len(ind2, dist2, liblen)
+			#t1 = time.time()
+			#print('ut.in_library:',np.around(t1-t0,4))
+
+			i_1 = ind1[:,:n_sorround]
+			i_2 = ind2[:,:n_sorround]
+			d_1 = dist1[:,:n_sorround]
+			d_2 = dist2[:,:n_sorround]
+
+			#t0 = time.time()
+			for j in range(self.X1_train.shape[1]):
+
+				W1 = ut.exp_weight(d_1)
+				W2 = ut.exp_weight(d_2)
+
+				#flip the weights and indices
+				x1_p[:, j] = np.sum(self.X1[i_2, j] * W2, axis=1)
+				x2_p[:, j] = np.sum(self.X2[i_1, j] * W1, axis=1)
+			#t1 = time.time()
+
+			#print('second_loop:',np.around(t1-t0,4))
+
+			X1_pred.append(x1_p)
+			X2_pred.append(x2_p)
 
 		self.X1_pred = X1_pred
 		self.X2_pred = X2_pred
 
 		if self.verbose: print("predictions made")
 
-	def score(self):
+		return X1_pred, X2_pred
+
+
+	def score(self,how='corrcoef'):
 		"""
-		Evalulate the predictions
+		Evalulate the predictions. Calculates the skill down each column
+		and averages them together to get the total skill.
 
 		how : how to score the predictions
 			-'score'
 			-'corrcoef'
 		"""
 
-		num_preds = self.X1_pred.shape[1]
+		num_preds = self.X1.shape[1]
 
-		sc1 = np.empty((1,num_preds))
-		sc2 = np.empty((1,num_preds))
+		score_1 = []
+		score_2 = []
 
-		for ii in range(num_preds):
+		for x1_p, x2_p in zip(self.X1_pred, self.X2_pred):
 
-			p1 = self.X1_pred[:,ii]
-			p2 = self.X2_pred[:,ii]
+			sc1 = np.empty(num_preds)
+			sc2 = np.empty(num_preds)
 
-			if self.score_metric == 'score':
-				sc1[0,ii] = ut.score(p1,self.X1_test[:,ii])
-				sc2[0,ii] = ut.score(p2,self.X2_test[:,ii])
+			for ii in range(num_preds):
 
-			if self.score_metric == 'corrcoef':
-				sc1[0,ii] = ut.corrcoef(p1,self.X1_test[:,ii])
-				sc2[0,ii] = ut.corrcoef(p2,self.X2_test[:,ii])
+				p1 = x1_p[:,ii]
+				p2 = x2_p[:,ii]
 
-		return np.mean(sc1,axis=1), np.mean(sc2,axis=1)
+				if self.score_metric == 'score':
+					sc1[ii] = ut.score(p1,self.X1[:,ii])
+					sc2[ii] = ut.score(p2,self.X2[:,ii])
+
+				if self.score_metric == 'corrcoef':
+					sc1[ii] = ut.corrcoef(p1,self.X1[:,ii])
+					sc2[ii] = ut.corrcoef(p2,self.X2[:,ii])
+
+			score_1.append( np.mean(sc1) )
+			score_2.append( np.mean(sc2) )
+
+		return score_1, score_2
 
 
-class embed:
+class Embed:
 
 	def __init__(self,X):
 		"""
@@ -324,6 +338,38 @@ class embed:
 			m_score[jj] = metrics.mutual_info_score(bin_tracker,bin_tracker_shift)
 		return m_score
 
+	def embed_indices(self,lag,embed):
+		"""
+		Gets the indices of the embedded time series. This assumes that the
+		time series is sequential. Non-sequential time series are currently
+		not supported.
+
+		Parameters
+		----------
+		lag : int
+			lag values as calculated from the first minimum of the mutual info.
+
+		embed : int
+			embedding dimension, how many lag values to take
+		"""
+
+		tsize = self.X.shape[0]
+
+		X = np.arange(0,tsize)
+
+		t_iter = tsize-(lag*(embed-1))
+
+		features = np.zeros((t_iter,embed))
+
+		for ii in range(t_iter):
+
+			end_val = ii+lag*(embed-1)+1
+
+			part = X[ii : end_val]
+
+			features[ii,:] = part[::lag]
+
+		return features
 
 
 	def embed_vectors_1d(self,lag,embed):
@@ -333,17 +379,11 @@ class embed:
 
 		Parameters
 		----------
-		X : array
-			A 1-D array representing the training or testing set.
-
 		lag : int
 			lag values as calculated from the first minimum of the mutual info.
 
 		embed : int
 			embedding dimension, how many lag values to take
-
-		predict : int
-			distance to forecast (see example)
 
 
 		Returns
