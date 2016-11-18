@@ -23,7 +23,7 @@ that calculating the distances is cheaper than filtering the indices.
 import numpy as np
 from sklearn import neighbors
 from sklearn import metrics
-import skCCM.utilities as ut
+import skccm.utilities as ut
 import pandas as pd
 import time
 

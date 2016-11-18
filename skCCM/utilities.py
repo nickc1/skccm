@@ -154,6 +154,7 @@ def in_library_len(ind,dist,lib_len):
 	ind : np.array, indices to be filtered
 	dist : np.array, distances to be filtered
 	val : what indices to keep
+
 	"""
 
 
@@ -171,6 +172,32 @@ def in_library_len(ind,dist,lib_len):
 	# filt_dist = dist[r,c].reshape(-1,keep)
 
 	return filt_ind, filt_dist
+
+def in_library_len_keep(ind,dist,lib_len,keep):
+	"""
+	Returns the filtered indices and distances that are in that specific
+	library length. Only returns the top n depending on the value of keep.
+	This allows the distances to only be calculated once. This algorithm is
+	slow for large matrices.
+	ind : np.array, indices to be filtered
+	dist : np.array, distances to be filtered
+	keep : what indices to keep
+
+	"""
+	ind_store = []
+	dist_store = []
+	for i in range(len(ind)):
+		mask = ind[i] < lib_len
+		ind_store.append( ind[i][mask] )
+		dist_store.append( dist[i][mask] )
+
+	ind_store = [x[:keep] for x in ind_store]
+	dist_store = [x[:keep] for x in dist_store]
+
+	return np.vstack(ind_store), np.vstack(dist_store)
+
+
+
 
 def throw_out_nn_indices(dist,ind, Xind):
 	"""

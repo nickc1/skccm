@@ -23,7 +23,7 @@ that calculating the distances is cheaper than filtering the indices.
 import numpy as np
 from sklearn import neighbors
 from sklearn import metrics
-import skCCM.utilities as ut
+import skccm.utilities as ut
 import pandas as pd
 import time
 
@@ -140,9 +140,6 @@ class CCM:
 		X1_pred = []
 		X2_pred = []
 
-		x1_p = np.empty(self.X1.shape)
-		x2_p = np.empty(self.X2.shape)
-
 		#need to reset the class ot use all neighbors so that the appropriate
 		# neighbors can be dropped for each class
 		self.knn1 = neighbors.KNeighborsRegressor(len(self.X1))
@@ -155,36 +152,34 @@ class CCM:
 		dist2,ind2 = self.knn2.kneighbors(self.X2)
 
 		#find the conflicting indices
-		conf1 = ccm.utilities.conflicting_indices(emb_ind1)
-		conf2 = ccm.utilities.conflicting_indices(emb_ind2)
+		conf1 = ut.conflicting_indices(emb_ind1)
+		conf2 = ut.conflicting_indices(emb_ind2)
 
 
 		#throw out the indices that are in the embedding
-		dist1, ind1 = ut.throw_out_nn_indices(dist1,ind1,conf)
-		dist2, ind2 = ut.throw_out_nn_indices(dist2,ind2,conf)
+		dist1, ind1 = ut.throw_out_nn_indices(dist1,ind1,conf1)
+		dist2, ind2 = ut.throw_out_nn_indices(dist2,ind2,conf2)
 
+		n_sorround = self.X1.shape[1] + 1
 		#flipping allows for a faster implentation as we can feed
 		# ut.in_libary_len smaller and smaller arrays
-		for liblen in lib_lengths[::-1]:
+		for liblen in lib_lengths:
 
 
 			#keep only the indices that are less than library length
 			#t0 = time.time()
-			ind1, dist1 = ut.in_library_len(ind1, dist1, liblen)
-			ind2, dist2 = ut.in_library_len(ind2, dist2, liblen)
+			i_1, d_1 = ut.in_library_len_keep(ind1, dist1, liblen,n_sorround)
+			i_2, d_2 = ut.in_library_len_keep(ind2, dist2, liblen,n_sorround)
 			#t1 = time.time()
-			#print('ut.in_library:',np.around(t1-t0,4))
-
-			i_1 = ind1[:,:n_sorround]
-			i_2 = ind2[:,:n_sorround]
-			d_1 = dist1[:,:n_sorround]
-			d_2 = dist2[:,:n_sorround]
 
 			#t0 = time.time()
-			for j in range(self.X1_train.shape[1]):
+			W1 = ut.exp_weight(d_1)
+			W2 = ut.exp_weight(d_2)
 
-				W1 = ut.exp_weight(d_1)
-				W2 = ut.exp_weight(d_2)
+			x1_p = np.empty(self.X1.shape)
+			x2_p = np.empty(self.X2.shape)
+
+			for j in range(self.X1.shape[1]):
 
 				#flip the weights and indices
 				x1_p[:, j] = np.sum(self.X1[i_2, j] * W2, axis=1)
