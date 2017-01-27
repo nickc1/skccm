@@ -1,6 +1,6 @@
-"""
-Metrics for scoring predictions from CCM
-"""
+#
+# Metrics for scoring predictions from CCM
+#
 
 import numpy as np
 from scipy import stats as stats

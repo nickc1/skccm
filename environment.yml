@@ -1,0 +1,7 @@
+name: skccm
+dependencies:
+  - python=3
+  - numpy
+  - scipy
+  - scikit-learn
+  - pytest

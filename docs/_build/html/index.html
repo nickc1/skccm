@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skccm &mdash; skccm 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="skccm 0.1 documentation" href="#"/>
+        <link rel="next" title="Install" href="install.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> skccm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-example.html">Quick Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate-data.html">Generate Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="embed.html">Embed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predict.html">Predict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="score.html">Score</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-reference.html">Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgements</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">skccm</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>skccm</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="skccm">
+<h1>skccm<a class="headerlink" href="#skccm" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/NickC1/skedm/blob/master/LICENSE"><img alt="License Type" src="https://img.shields.io/github/license/mashape/apistatus.svg" /></a></p>
+<p><strong>Scikit Convergent Cross Mapping</strong></p>
+<p>Scikit Convergent Cross Mapping (skccm) can be used as a way to detect causality
+between time series.</p>
+<p>For a quick explanation of this package, I suggest checking out the <a class="reference internal" href="quick-example.html#example"><span class="std std-ref">Quick Example</span></a>
+section as well as the wikipedia article on <a class="reference external" href="https://www.wikiwand.com/en/Convergent_cross_mapping">convergent cross mapping</a> . Additionally,
+<a class="reference external" href="http://deepeco.ucsd.edu/">Dr. Sugihara&#8217;s lab</a> has produced some good summary videos about the topic:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="https://www.youtube.com/watch?v=fevurdpiRYg">Time Series and Dynamic Manifolds</a></li>
+<li><a class="reference external" href="https://www.youtube.com/watch?v=rs3gYeZeJcw">Reconstructed Shadow Manifold</a></li>
+<li><a class="reference external" href="https://youtu.be/iSttQwb-_5Y">State Space Reconstruction: Convergent Cross Mapping</a></li>
+</ol>
+<p>For a more complete background, I suggest checking out the following papers:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://science.sciencemag.org/content/338/6106/496">Detecting Causality in Complex Ecosystems by Sugihara</a></li>
+<li><a class="reference external" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4592974/">Distinguishing time-delayed causal interactions using convergent cross mapping by Ye</a></li>
+</ol>
+<p>Sugihara also have a good <a class="reference external" href="https://youtu.be/uhONGgfx8Do">talk about about Correlation and Causation</a>.</p>
+<div class="toctree-wrapper compound" id="contents">
+<p class="caption"><span class="caption-text">Contents:</span><a class="headerlink" href="#contents" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#pip">pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#conda-recommended">Conda (Recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#contribute-report-issues-support">Contribute, Report Issues, Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quick-example.html">Quick Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quick-example.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="generate-data.html">Generate Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="embed.html">Embed</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="embed.html#lag-value">Lag Value</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embed.html#embedding-dimension">Embedding Dimension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embed.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="predict.html">Predict</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="predict.html#training-and-testing">Training and Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predict.html#distance-calculation">Distance Calculation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predict.html#weighted-average">Weighted Average</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predict.html#library-length">Library Length</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="score.html">Score</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-reference.html">Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgements</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="install.html" class="btn btn-neutral float-right" title="Install" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Nick Cortale.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,19 +1,19 @@
-"""
-Data for analyzing causality.
-By Nick Cortale
-
-Functions:
-coupled_logistic : coupled logistic map
-driven_rand_logistic : logistic map driven with random forcing
-driving_sin : logistic map driven with a sine wave
-
-
-Paper:
-Detecting Causality in Complex Ecosystems
-George Sugihara et al. 2012
-
-Thanks to Kenneth Ells and Dylan McNamara
-"""
+#
+# Data for analyzing causality.
+# By Nick Cortale
+#
+# Functions:
+# coupled_logistic : coupled logistic map
+# driven_rand_logistic : logistic map driven with random forcing
+# driving_sin : logistic map driven with a sine wave
+#
+#
+# Paper:
+# Detecting Causality in Complex Ecosystems
+# George Sugihara et al. 2012
+#
+# Thanks to Kenneth Ells and Dylan McNamara
+#
 
 import numpy as np
 from numpy import genfromtxt

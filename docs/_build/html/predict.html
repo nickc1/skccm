@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Predict &mdash; skccm 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Score" href="score.html"/>
+        <link rel="prev" title="Embed" href="embed.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> skccm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-example.html">Quick Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate-data.html">Generate Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="embed.html">Embed</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Predict</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#training-and-testing">Training and Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#distance-calculation">Distance Calculation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#weighted-average">Weighted Average</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#library-length">Library Length</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="score.html">Score</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-reference.html">Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgements</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">skccm</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Predict</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/predict.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="predict">
+<h1>Predict<a class="headerlink" href="#predict" title="Permalink to this headline">¶</a></h1>
+<p>At the heart of convergent cross mapping is the <a class="reference external" href="https://www.wikiwand.com/en/K-nearest_neighbors_algorithm">k-nearest neighbors algorithm</a>. In fact, the package uses scikit-learn&#8217;s <a class="reference external" href="http://scikit-learn.org/stable/modules/neighbors.html">nearest neighbor implementation</a> for efficient calculation of distances and to retrieve the indices of the nearest neighbors. It is a good idea to understand the k-nearest neighbor algorithm before interpreting what this package implements.</p>
+<div class="section" id="training-and-testing">
+<h2>Training and Testing<a class="headerlink" href="#training-and-testing" title="Permalink to this headline">¶</a></h2>
+<p>Before making predictions, split the embedded time series into a testing set and a training set. This protects against highly autocorrelated time series. For example, random walk time series can seem like they are coupled if they are not split into a training set and testing set.</p>
+<img alt="_images/train_test_split.png" class="align-center" src="_images/train_test_split.png" />
+<p>The code for this is done with a function in <code class="docutils literal"><span class="pre">skccm.utilities</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skccm.utilities</span> <span class="k">import</span> <span class="n">train_test_split</span>
+
+<span class="c1">#split the embedded time series</span>
+<span class="n">x1tr</span><span class="p">,</span> <span class="n">x1te</span><span class="p">,</span> <span class="n">x2tr</span><span class="p">,</span> <span class="n">x2te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span><span class="n">X2</span><span class="p">,</span> <span class="n">percent</span><span class="o">=.</span><span class="mi">75</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The code above uses the first 75% as the training set (to rebuild the shadow manifolds) and uses the last 25% as the testing set.</p>
+</div>
+<div class="section" id="distance-calculation">
+<h2>Distance Calculation<a class="headerlink" href="#distance-calculation" title="Permalink to this headline">¶</a></h2>
+<p>At this point, you will have these four embedded time series:</p>
+<ol class="arabic simple">
+<li>X1tr</li>
+<li>X1te</li>
+<li>X2tr</li>
+<li>X2te</li>
+</ol>
+<p>The distance is calculated from every sample in <code class="docutils literal"><span class="pre">X1te</span></code> to every sample in <code class="docutils literal"><span class="pre">X1tr</span></code>. The same is then done for <code class="docutils literal"><span class="pre">X2tr</span></code> and <code class="docutils literal"><span class="pre">X2te</span></code>. The distances are then sorted and the closest <span class="math">\(k\)</span> indices are kept to make a prediction in the next step. <span class="math">\(k\)</span> is the embedding dimension plus 1. So if your embedding dimension was three, then the amount of near neighbors used to make a prediction will be four.</p>
+</div>
+<div class="section" id="weighted-average">
+<h2>Weighted Average<a class="headerlink" href="#weighted-average" title="Permalink to this headline">¶</a></h2>
+<p>The next step is to use the near neighbor indices and weights to make a prediction about the other time series. The indices that were found by calculating the distance from every sample in X1te to every sample in X1tr, are used on X2tr to make a prediction about X2te. This seems a little counterintuitive, but it is expected that if one time series influences the other, the system being forced should be in a similar state when the system doing the forcing is in a certain configuration.</p>
+<img alt="_images/switching_weights.png" src="_images/switching_weights.png" />
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">align:</th><td class="field-body">center</td>
+</tr>
+</tbody>
+</table>
+<p>Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need $$K+1$$ near neighbors in order to surround a point.</p>
+</div>
+<div class="section" id="library-length">
+<h2>Library Length<a class="headerlink" href="#library-length" title="Permalink to this headline">¶</a></h2>
+<p>A prediction is made for multiple library lengths. As the library length is increased, the prediction skill should converge. By increasing the library length, the density of the rebuilt attractor is increasing. As that attractor becomes more and more populated, better predictions should be able to be made.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="score.html" class="btn btn-neutral float-right" title="Score" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="embed.html" class="btn btn-neutral" title="Embed" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Nick Cortale.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

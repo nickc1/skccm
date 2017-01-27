@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quick Example &mdash; skccm 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Generate Data" href="generate-data.html"/>
+        <link rel="prev" title="Install" href="install.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> skccm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="generate-data.html">Generate Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="embed.html">Embed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predict.html">Predict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="score.html">Score</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-reference.html">Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgements.html">Acknowledgements</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">skccm</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Quick Example</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/quick-example.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quick-example">
+<span id="example"></span><h1>Quick Example<a class="headerlink" href="#quick-example" title="Permalink to this headline">¶</a></h1>
+<p>In order to illustrate how this package works, we will use the coupled logistic map from the original convergent cross mapping paper. The equations the form:</p>
+<div class="math">
+\[ \begin{align}\begin{aligned}X(t+1) = X(t)[r_x - r_x X(t) - \beta_{x,y}Y(t)]\\Y(t+1) = Y(t)[r_y - r_y Y(t) - \beta_{y,x}X(t)]\end{aligned}\end{align} \]</div>
+<p>Notice that <span class="math">\(\beta_{x,y}\)</span> controls the amount of information from the <span class="math">\(Y\)</span> time series that is being injected into the <span class="math">\(X\)</span> time series. Likewise, <span class="math">\(\beta_{y,x}\)</span> controls the amount of information injected into the <span class="math">\(Y\)</span> time series from the <span class="math">\(X\)</span> time series. These parameters control how much one series influences the other. There is a function in <code class="docutils literal"><span class="pre">skccm.data</span></code> to reproduce these time series. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">skccm.data</span> <span class="k">as</span> <span class="nn">data</span>
+
+<span class="n">rx1</span> <span class="o">=</span> <span class="mf">3.72</span> <span class="c1">#determines chaotic behavior of the x1 series</span>
+<span class="n">rx2</span> <span class="o">=</span> <span class="mf">3.72</span> <span class="c1">#determines chaotic behavior of the x2 series</span>
+<span class="n">b12</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1">#Influence of x1 on x2</span>
+<span class="n">b21</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="c1">#Influence of x2 on x1</span>
+<span class="n">ts_length</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">x1</span><span class="p">,</span><span class="n">x2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">coupled_logistic</span><span class="p">(</span><span class="n">rx1</span><span class="p">,</span><span class="n">rx2</span><span class="p">,</span><span class="n">b12</span><span class="p">,</span><span class="n">b21</span><span class="p">,</span><span class="n">ts_length</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here we opt to use <code class="docutils literal"><span class="pre">x1</span></code> and <code class="docutils literal"><span class="pre">x2</span></code> instead of <code class="docutils literal"><span class="pre">X</span></code> and <code class="docutils literal"><span class="pre">Y</span></code>, but the equations are the same. Using these parameters, <code class="docutils literal"><span class="pre">x1</span></code> has more of an influence on <code class="docutils literal"><span class="pre">x2</span></code> than <code class="docutils literal"><span class="pre">x2</span></code> has on <code class="docutils literal"><span class="pre">x1</span></code>. This produces the coupled logistic map as seen in the figure below where the top plot is <code class="docutils literal"><span class="pre">x1</span></code> and the bottom is <code class="docutils literal"><span class="pre">x2</span></code>.</p>
+<img alt="_images/coupled_logistic.png" class="align-center" src="_images/coupled_logistic.png" />
+<p>As is clearly evident from the figure above, there is no way to tell if one series is influencing the other just by examining the time series.</p>
+<p>The next step is to embed both time series. An in-depth discussion about appropriately picking the lag and the embedding dimension can be found in the <a class="reference internal" href="embed.html#embed"><span class="std std-ref">Embed</span></a> section. For this example, an embedding dimension of 2 and a lag of 1 successfully rebuilds the shadow manifold.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lag</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">embed</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X1</span> <span class="o">=</span> <span class="n">e1</span><span class="o">.</span><span class="n">embed_vectors_1d</span><span class="p">(</span><span class="n">lag</span><span class="p">,</span><span class="n">embed</span><span class="p">)</span>
+<span class="n">X2</span> <span class="o">=</span> <span class="n">e2</span><span class="o">.</span><span class="n">embed_vectors_1d</span><span class="p">(</span><span class="n">lag</span><span class="p">,</span><span class="n">embed</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/x_embedded.png" class="align-center" src="_images/x_embedded.png" />
+<p>Now that we have embed the time series, all that is left to do is check the forecast skill as a function of library length. This package diverges from the paper above in that a training set is used to rebuild the shadow manifold and the testing set is used to see if nearby points on one manifold can be used to make accurate predictions about the other manifold. This removes the problem of autocorrelated time series. The original implementation can be found in <code class="docutils literal"><span class="pre">ccm.paper</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skccm.utilities</span> <span class="k">import</span> <span class="n">train_test_split</span>
+
+<span class="c1">#split the embedded time series</span>
+<span class="n">x1tr</span><span class="p">,</span> <span class="n">x1te</span><span class="p">,</span> <span class="n">x2tr</span><span class="p">,</span> <span class="n">x2te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span><span class="n">X2</span><span class="p">,</span> <span class="n">percent</span><span class="o">=.</span><span class="mi">75</span><span class="p">)</span>
+
+<span class="n">CCM</span> <span class="o">=</span> <span class="n">ccm</span><span class="o">.</span><span class="n">ccm</span><span class="p">()</span> <span class="c1">#initiate the class</span>
+
+<span class="c1">#library lengths to test</span>
+<span class="n">len_tr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x1tr</span><span class="p">)</span>
+<span class="n">lib_lens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">len_tr</span><span class="p">,</span> <span class="n">len_tr</span><span class="o">/</span><span class="mi">20</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+
+<span class="c1">#test causation</span>
+<span class="n">sc1</span><span class="p">,</span> <span class="n">sc2</span> <span class="o">=</span> <span class="n">CCM</span><span class="o">.</span><span class="n">predict_causation</span><span class="p">(</span><span class="n">x1tr</span><span class="p">,</span> <span class="n">x1te</span><span class="p">,</span> <span class="n">x2tr</span><span class="p">,</span> <span class="n">x2te</span><span class="p">,</span><span class="n">lib_lens</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/xmap_lib_len.png" class="align-center" src="_images/xmap_lib_len.png" />
+<p>As can be seen from the image above, <code class="docutils literal"><span class="pre">x1</span></code> has a higher prediction skill. Another way to view this is that information about <code class="docutils literal"><span class="pre">x1</span></code> is present in the <code class="docutils literal"><span class="pre">x2</span></code> time series. This leads to better forecasts for <code class="docutils literal"><span class="pre">x1</span></code> using <code class="docutils literal"><span class="pre">x2</span></code>&#8216;s reconstructed manifold. This means that <code class="docutils literal"><span class="pre">x1</span></code> is driving <code class="docutils literal"><span class="pre">x2</span></code> which is exactly how we set the initial conditions when we generated these time series.</p>
+<p>To make sure that this algorithm is robust we test a range of <span class="math">\(\beta\)</span> values similar to the original paper. The results below show the difference between <code class="docutils literal"><span class="pre">sc1</span></code> and <code class="docutils literal"><span class="pre">sc2</span></code>.</p>
+<div class="figure align-center">
+<img alt="_images/xmap_changingB.png" src="_images/xmap_changingB.png" />
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>The workflow for convergent cross mapping is as follows:</p>
+<ol class="arabic simple">
+<li>Calculate the mutual information of both time series to find the appropriate lag value</li>
+<li>Embed the time series using the calculated lag and best embedding dimension</li>
+<li>Split each embedded time series into a training set and testing set</li>
+<li>Calculate the distance from each test sample to each training sample</li>
+<li>Use the near neighbor time indices from <span class="math">\(X_1\)</span> to make a prediction about <span class="math">\(X_2\)</span></li>
+<li>Repeat the prediction for multiple library lengths</li>
+<li>Evaluate the predictions</li>
+</ol>
+<p><strong>1. Calculate mutual information for both time series to find the appropriate lag value.</strong></p>
+<p>Mutual information is used as a way to jump far enough in time that new information about the system can be gained. A similar idea is calculating the autocorrelation. Systems that don&#8217;t change much from one time step to the next would have higher autocorrelation and thus a larger lag value would be necessary to gain new information about the system. It turns out that using mutual information over autocorrelation allows for better predictions to be made [CITATION].</p>
+<img alt="_images/lorenz_mutual_info.png" class="align-center" src="_images/lorenz_mutual_info.png" />
+<p><em>Figure:</em> The image above shows the mutual information for the $$x$$ values of the lorenz time series. We can see a minimum around 16.</p>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a><a href="#id3"><span class="problematic" id="id4">*</span></a></p>
+<p>&lt;br&gt;</p>
+<p><strong>2. Determine the embedding dimension by finding which gives the highest prediction skill.</strong></p>
+<p>Ideally you want to find the best embedding dimension for a specific time series. A good rule of thumb is to use an embedding dimension of three as your first shot. After the initial analysis, you can tweak this hyperparameter until you achieve the best prediction skill.</p>
+<p>Alternatively, you can use a [false near neighbor][fnn] test when the reconstructed attractor is fully &#8220;unfolded&#8221;. This functionality is not in skccm currently, but will be added in the future.</p>
+<p><a href="#id5"><span class="problematic" id="id6">**</span></a><a href="#id7"><span class="problematic" id="id8">*</span></a></p>
+<img alt="_images/embedding.gif" class="align-center" src="_images/embedding.gif" />
+<p><em>Figure:</em> An example of an embedding dimension of three and a lag of two.</p>
+<p><a href="#id9"><span class="problematic" id="id10">**</span></a><a href="#id11"><span class="problematic" id="id12">*</span></a></p>
+<p>&lt;br&gt;</p>
+<p><strong>3. Split each embedded time series into a training set and testing set.</strong></p>
+<p>This protects against highly autocorrelated time series. For example, random walk time series can seem like they are coupled if they are not split into a training set and testing set.</p>
+<img alt="_images/train_test_split.png" class="align-center" src="_images/train_test_split.png" />
+<p><em>Figure:</em> Splitting an embedded time series into a training set and a testing set.</p>
+<p><a href="#id13"><span class="problematic" id="id14">**</span></a><a href="#id15"><span class="problematic" id="id16">*</span></a></p>
+<p>&lt;br&gt;</p>
+<p><strong>5. Calculate the distance from each test sample to each training sample</strong></p>
+<p>At this point, you will have these four embedded time series:</p>
+<ol class="arabic simple">
+<li>X1tr</li>
+<li>X1te</li>
+<li>X2tr</li>
+<li>X2te</li>
+</ol>
+<p>The distance is calculated from every sample in X1te to every sample in X1tr. The same is then done for X2tr and X2te. The distances are then sorted and the closest $$k$$ indices are kept to make a prediction in the next step. $$k$$ is the embedding dimension plus 1. So if your embedding dimension was three, then the amount of near neighbors used to make a prediction will be four.</p>
+<p><strong>6. Use the near neighbor time indices from $$X_1$$ to make a prediction about $$X_2$$</strong></p>
+<p>The next step is to use the near neighbor indices and weights to make a prediction about the other time series. The indices that were found by calculating the distance from every sample in X1te to every sample in X1tr, are used on X2tr to make a prediction about X2te. This seems a little counterintuitive, but it is expected that if one time series influences the other, the system being forced should be in a similar state when the system doing the forcing is in a certain configuration.</p>
+<p>INSERT THOUGHT EXPERIMENT</p>
+<p><a href="#id17"><span class="problematic" id="id18">**</span></a><a href="#id19"><span class="problematic" id="id20">*</span></a></p>
+<img alt="_images/switching_weights.png" class="align-center" src="_images/switching_weights.png" />
+<p><em>Figure:</em> An example of switching the indices. Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need $$K+1$$ near neighbors in order to surround a point.</p>
+<p><a href="#id21"><span class="problematic" id="id22">**</span></a>*
+&lt;br&gt;</p>
+<p><strong>7. Repeat the prediction for multiple library lengths</strong></p>
+<p>The hope is we see convergence as the library length is increased. By increasing the library length, the density of the rebuilt attractor is increasing. As that attractor becomes more and more populated, better predictions should be able to be made.</p>
+<p><strong>8. Finally, evaluate the predictions</strong></p>
+<p>The way the predictions are evaluated in the paper is by using the [$$R^2$$][r2] (coefficient of determination) value between the predictions and the actual value. This is done for all the predictions at multiple library lengths. If the predictions for $$X_1$$ are better than $$X_2$$ than it is said that $$X_1$$ influences $$X_2$$.</p>
+<p># Caveats</p>
+<ul class="simple">
+<li>Simple attractors can fool this technique (sine waves)</li>
+<li>Can&#8217;t be used on non-steady state time series.</li>
+<li>Lorenz equation doesn&#8217;t work?</li>
+</ul>
+<p>[paper]: <a class="reference external" href="http://science.sciencemag.org/content/338/6106/496">http://science.sciencemag.org/content/338/6106/496</a>
+[skccm]:<a class="reference external" href="https://github.com/NickC1/skccm">https://github.com/NickC1/skccm</a>
+[r2]: <a class="reference external" href="https://www.wikiwand.com/en/Coefficient_of_determination">https://www.wikiwand.com/en/Coefficient_of_determination</a>
+[fnn]: <a class="reference external" href="http://www.mpipks-dresden.mpg.de/~tisean/TISEAN_2.1/docs/chaospaper/node9.html">http://www.mpipks-dresden.mpg.de/~tisean/TISEAN_2.1/docs/chaospaper/node9.html</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generate-data.html" class="btn btn-neutral float-right" title="Generate Data" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Install" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Nick Cortale.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

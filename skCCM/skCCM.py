@@ -1,29 +1,29 @@
-"""
-Data for analyzing causality.
-By Nick Cortale
-
-Classes:
-	ccm
-	embed
-
-Paper:
-Detecting Causality in Complex Ecosystems
-George Sugihara et al. 2012
-
-Thanks to Kenneth Ells and Dylan McNamara
-
-Notes:
-Originally I thought this can be made way faster by only calculting the
-distances once and then chopping it to a specific library length. It turns out
-that calculating the distances is cheaper than filtering the indices.
-"""
+#
+# Data for analyzing causality.
+# By Nick Cortale
+#
+# Classes:
+# 	ccm
+# 	embed
+#
+# Paper:
+# Detecting Causality in Complex Ecosystems
+# George Sugihara et al. 2012
+#
+# Thanks to Kenneth Ells and Dylan McNamara
+#
+# Notes:
+# Originally I thought this can be made way faster by only calculting the
+# distances once and then chopping it to a specific library length. It turns out
+# that calculating the distances is cheaper than filtering the indices.
+#
 
 
 
 import numpy as np
 from sklearn import neighbors
 from sklearn import metrics
-import skccm.utilities as ut
+from . import utilities
 import pandas as pd
 import time
 
@@ -108,8 +108,8 @@ class CCM:
 
 			for j in range(self.X1_train.shape[1]):
 
-				W1 = ut.exp_weight(dist1)
-				W2 = ut.exp_weight(dist2)
+				W1 = utilities.exp_weight(dist1)
+				W2 = utilities.exp_weight(dist2)
 
 				#flip the weights and indices
 				x1_p[:, j] = np.sum(self.X1_train[ind2, j] * W2, axis=1)
@@ -150,12 +150,12 @@ class CCM:
 				p2 = x2_p[:,ii]
 
 				if self.score_metric == 'score':
-					sc1[ii] = ut.score(p1,self.X1_test[:,ii])
-					sc2[ii] = ut.score(p2,self.X2_test[:,ii])
+					sc1[ii] = utilities.score(p1,self.X1_test[:,ii])
+					sc2[ii] = utilities.score(p2,self.X2_test[:,ii])
 
 				if self.score_metric == 'corrcoef':
-					sc1[ii] = ut.corrcoef(p1,self.X1_test[:,ii])
-					sc2[ii] = ut.corrcoef(p2,self.X2_test[:,ii])
+					sc1[ii] = utilities.corrcoef(p1,self.X1_test[:,ii])
+					sc2[ii] = utilities.corrcoef(p2,self.X2_test[:,ii])
 
 			score_1.append( np.mean(sc1) )
 			score_2.append( np.mean(sc2) )

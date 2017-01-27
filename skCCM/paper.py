@@ -1,22 +1,22 @@
-"""
-Data for analyzing causality.
-By Nick Cortale
-
-Classes:
-	ccm
-	embed
-
-Paper:
-Detecting Causality in Complex Ecosystems
-George Sugihara et al. 2012
-
-Thanks to Kenneth Ells and Dylan McNamara
-
-Notes:
-Originally I thought this can be made way faster by only calculting the
-distances once and then chopping it to a specific library length. It turns out
-that calculating the distances is cheaper than filtering the indices.
-"""
+# 
+# Data for analyzing causality.
+# By Nick Cortale
+#
+# Classes:
+# 	ccm
+# 	embed
+#
+# Paper:
+# Detecting Causality in Complex Ecosystems
+# George Sugihara et al. 2012
+#
+# Thanks to Kenneth Ells and Dylan McNamara
+#
+# Notes:
+# Originally I thought this can be made way faster by only calculting the
+# distances once and then chopping it to a specific library length. It turns out
+# that calculating the distances is cheaper than filtering the indices.
+#
 
 
 
