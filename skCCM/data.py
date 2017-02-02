@@ -2,12 +2,6 @@
 # Data for analyzing causality.
 # By Nick Cortale
 #
-# Functions:
-# coupled_logistic : coupled logistic map
-# driven_rand_logistic : logistic map driven with random forcing
-# driving_sin : logistic map driven with a sine wave
-#
-#
 # Paper:
 # Detecting Causality in Complex Ecosystems
 # George Sugihara et al. 2012
@@ -21,30 +15,30 @@ from scipy import integrate
 
 
 def coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
-    """
-    Coupled logistic map.
+    """Coupled logistic map.
 
     Parameters
     ----------
     rx1 : float
-        parameter that determines chaotic behavior of the x1 series
+        Parameter that determines chaotic behavior of the x1 series.
     rx2 : float
-        parameter that determines chatotic behavior of the x2 series
+        Parameter that determines chatotic behavior of the x2 series.
     b12 : float
-        Influence of x1 on x2
+        Influence of x1 on x2.
     b21 : float
-        Influence of x2 on x1
+        Influence of x2 on x1.
     ts_length : int
-        Length of the calculated time series
-    random_start : Boolean
-        random initialization of starting conditions
+        Length of the calculated time series.
+    random_start : bool
+        Random initialization of starting conditions.
 
     Returns
     -------
-    x1 : array
-        array of length (ts_length,) that stores the values of the x series
-    x2 : array
-        array of length (ts_length,) that stores the values of the y series
+    x1 : 1d array
+        Array of length (ts_length,) that stores the values of the x series.
+    x2 : 1d array
+        Array of length (ts_length,) that stores the values of the y series.
+
     """
 
     # Initial conditions after McCracken (2014)
@@ -67,27 +61,26 @@ def coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
 
 
 def driven_rand_logistic(rx2, b12, ts_length,random_start=False):
-    """
-    Logistic map with random forcing. x1 is the random array and x2 is the
-	logistic map.
+    """Logistic map with random forcing. x1 is the random array and x2 is the
+    logistic map.
 
     Parameters
     ----------
     rx2 : float
-        parameter that determines chatotic behavior of the x2 series
+        Parameter that determines chatotic behavior of the x2 series.
     b12 : float
-        Influence of x1 on x2
+        Influence of x1 on x2.
     ts_length : int
-        Length of the calculated time series
+        Length of the calculated time series.
     random_start : Boolean
-        random initialization of starting conditions
+        Random initialization of starting conditions.
 
     Returns
     -------
     x1 : array
-        array of length (ts_length,)
+        Array of length (ts_length,)
     x2 : array
-        array of length (ts_length,)
+        Array of length (ts_length,)
     """
 
     x1 = np.random.rand(ts_length)*.4
@@ -108,28 +101,26 @@ def driven_rand_logistic(rx2, b12, ts_length,random_start=False):
 
 
 
-def driving_sin(rx2, b12, ts_length,random_start=False):
-    """
-    Sine wave driving a logistic map.
+def driving_sin(rx2, b12, ts_length, random_start=False):
+    """Sine wave driving a logistic map.
 
     Parameters
     ----------
-
     rx2 : float
-        parameter that determines chatotic behavior of the x2 series
+        Parameter that determines chatotic behavior of the x2 series.
     b12 : float
-        Influence of x1 on x2
+        Influence of x1 on x2.
     ts_length : int
-        Length of the calculated time series
+        Length of the calculated time series.
     random_start : Boolean
-        random initialization of starting conditions
+        Random initialization of starting conditions.
 
     Returns
     -------
     x1 : array
-        array of length (ts_length,) that stores the values of the x series
+        Array of length (ts_length,) that stores the values of the x series.
     x2 : array
-        array of length (ts_length,) that stores the values of the y series
+        Array of length (ts_length,) that stores the values of the y series.
     """
 
     x1 = np.sin(np.linspace(0,100*np.pi,ts_length))*.4
@@ -146,31 +137,30 @@ def driving_sin(rx2, b12, ts_length,random_start=False):
 
     return x1,x2
 
-def lagged_coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
-    """
-    Coupled logistic map. x1 is driven by random lags of x2.
+def lagged_coupled_logistic(rx1, rx2, b12, b21, ts_length, random_start=False):
+    """Coupled logistic map. x1 is driven by random lags of x2.
 
     Parameters
     ----------
     rx1 : float
-        parameter that determines chaotic behavior of the x1 series
+        Parameter that determines chaotic behavior of the x1 series.
     rx2 : float
-        parameter that determines chatotic behavior of the x2 series
+        Parameter that determines chatotic behavior of the x2 series.
     b12 : float
-        Influence of x1 on x2
+        Influence of x1 on x2.
     b21 : float
-        Influence of x2 on x1
+        Influence of x2 on x1.
     ts_length : int
-        Length of the calculated time series
+        Length of the calculated time series.
     random_start : Boolean
-        random initialization of starting conditions
+        Random initialization of starting conditions.
 
     Returns
     -------
     x1 : array
-        array of length (ts_length,) that stores the values of the x series
+        Array of length (ts_length,) that stores the values of the x series.
     x2 : array
-        array of length (ts_length,) that stores the values of the y series
+        Array of length (ts_length,) that stores the values of the y series.
     """
 
     # Initial conditions after McCracken (2014)
@@ -196,37 +186,31 @@ def lagged_coupled_logistic(rx1, rx2, b12, b21, ts_length,random_start=False):
 
     return x1,x2
 
-def lorenz(sz=10000,noise=0,max_t=100.):
-	"""
-	Integrates the lorenz equation defined in lorenz_deriv
+def lorenz(sz=10000, noise=0, max_t=100.):
+    """Integrates the lorenz equation.
 
-	Parameters
-	----------
+    Parameters
+    ----------
+    sz : int
+        Length of the time series to be integrated.
+    noise : float
+        Amplitude of noise to be added to the lorenz equation.
+    max_t : float
+        Length of time to solve the lorenz equation over.
 
-	sz : int
-		Length of the time series to be integrated
+    Returns
+    -------
+    X : 1D array
+        Returns a 1D periodic of solutions to the Lorenz equations.
+    """
 
-	noise : float
-		Amplitude of noise to be added to the lorenz equation
-
-	max_t : float
-		Length of time to solve the lorenz equation over
-
-	Returns
-	-------
-
-	X : 1D array
-		Returns a 1D periodic equaiton of size (sz) with values between 0 and 1
-	"""
-
-
-	def lorenz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
-		x,y,z = xyz
-		return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
+    def lorenz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
+        x,y,z = xyz
+        return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
 
 
-	x0 = [1, 1, 1]  # starting vector
-	t = np.linspace(0, max_t, sz)  # one thousand time steps
-	X = integrate.odeint(lorenz_deriv, x0, t) + noise*np.random.rand(sz,3)
+    x0 = [1, 1, 1]  # starting vector
+    t = np.linspace(0, max_t, sz)  # one thousand time steps
+    X = integrate.odeint(lorenz_deriv, x0, t) + noise*np.random.rand(sz,3)
 
-	return X
+    return X

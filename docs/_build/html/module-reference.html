@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
         <link rel="next" title="Acknowledgements" href="acknowledgements.html"/>
         <link rel="prev" title="Score" href="score.html"/> 
@@ -125,7 +128,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/module-reference.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/module-reference.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -140,37 +143,190 @@
 <dl class="class">
 <dt id="skccm.skccm.CCM">
 <em class="property">class </em><code class="descclassname">skccm.skccm.</code><code class="descname">CCM</code><span class="sig-paren">(</span><em>weights='exp'</em>, <em>score_metric='corrcoef'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.CCM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convergent cross mapping for two embedded time series</p>
+<dd><p>Convergent cross mapping for two embedded time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>weights</strong> (<em>str</em>) &#8211; Weighting scheme for predictions. Options:
+- &#8216;exp&#8217; : exponential weighting</li>
+<li><strong>score</strong> (<em>str</em>) &#8211; <p>How to score the predictions. Options:</p>
+<ul>
+<li>&#8216;score&#8217;</li>
+<li>&#8216;corrcoef&#8217;</li>
+</ul>
+</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Prints out calculation status.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="skccm.skccm.CCM.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X1_train</em>, <em>X2_train</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.CCM.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit the training data for ccm. Amount of near neighbors is set to be
-embedding dimension plus one. Creates seperate near neighbor regressors
-for X1 and X2 independently. Also Calculates the distances to each
-sample.</p>
-<p>X1 : embedded time series of shape (num_samps,embed_dim)
-X2 : embedded time series of shape (num_samps,embed_dim)</p>
+<dd><p>Fit the training data for ccm. Can be thought of reconstructing the
+shadow manifolds of each time series.</p>
+<p>Amount of near neighbors is set to be embedding dimension plus one.
+Creates seperate near neighbor regressors for X1 and X2 independently.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X1_train</strong> (<em>2d array</em>) &#8211; Embed time series of shape (num_samps,embed_dim).</li>
+<li><strong>X2_train</strong> (<em>2d array</em>) &#8211; Embed time series of shape (num_samps,embed_dim).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="skccm.skccm.CCM.predict">
 <code class="descname">predict</code><span class="sig-paren">(</span><em>X1_test</em>, <em>X2_test</em>, <em>lib_lengths</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.CCM.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a prediction</p>
-<p>X1_test : test set
-X2_test : test set
-lib_lengths : list of library lengths to test</p>
+<dd><p>Make a prediction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X1_test</strong> (<em>2d array</em>) &#8211; Embed time series of shape (num_samps,embed_dim).</li>
+<li><strong>X2_test</strong> (<em>2d array</em>) &#8211; Embed time series of shape (num_samps,embed_dim).</li>
+<li><strong>lib_lengths</strong> (<em>1d array of ints</em>) &#8211; Library lengths to test.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>X1_pred</strong> (<em>list of 2d arrays</em>) &#8211; Predictions for each library length.</li>
+<li><strong>X2_pred</strong> (<em>list of 2d arrays</em>) &#8211; Predictions for each library length.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="skccm.skccm.CCM.score">
 <code class="descname">score</code><span class="sig-paren">(</span><em>how='corrcoef'</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.CCM.score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evalulate the predictions. Calculates the skill down each column
-and averages them together to get the total skill.</p>
-<dl class="docutils">
-<dt>how</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">how to score the predictions</span><dd>-&#8216;score&#8217;
--&#8216;corrcoef&#8217;</dd>
-</dl>
+<dd><p>Evalulate the predictions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>how</strong> (<em>string</em>) &#8211; How to score the predictions. Options:
+- &#8216;score&#8217;
+- &#8216;corrcoef&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>score_1</strong> (<em>2d array</em>) &#8211; Scores for the first time series using the weights from the second
+time series.</li>
+<li><strong>score_2</strong> (<em>2d array</em>) &#8211; Scores for the second time series using the weights from the first
+time series.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skccm.skccm.Embed">
+<em class="property">class </em><code class="descclassname">skccm.skccm.</code><code class="descname">Embed</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.Embed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Embed a time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>1D array</em>) &#8211; Time series to be embed.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skccm.skccm.Embed.df_mutual_information">
+<code class="descname">df_mutual_information</code><span class="sig-paren">(</span><em>max_lag</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.Embed.df_mutual_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the mutual information along each column of a dataframe.</p>
+<p>Ensure that the time series is continuous in time and sampled regularly.
+You can resample it hourly, daily, minutely etc. if needed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_lag</strong> (<em>int</em>) &#8211; maximum amount to shift the time series</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>mi</strong> &#8211; columns are the columns of the original dataframe with rows being
+the mutual information. shape(max_lag,num_cols)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dataframe</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skccm.skccm.Embed.embed_vectors_1d">
+<code class="descname">embed_vectors_1d</code><span class="sig-paren">(</span><em>lag</em>, <em>embed</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.Embed.embed_vectors_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Embeds vectors from a one dimensional time series in m-dimensional
+space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>1d array</em>) &#8211; Training or testing set.</li>
+<li><strong>lag</strong> (<em>int</em>) &#8211; Lag value as calculated from the first minimum of the mutual info.</li>
+<li><strong>embed</strong> (<em>int</em>) &#8211; Embedding dimension. How many lag values to take.</li>
+<li><strong>predict</strong> (<em>int</em>) &#8211; Distance to forecast (see example).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>features</strong> &#8211; Contains all of the embedded vectors. Shape (num_vectors,embed).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">2d array</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="go">em = 3</span>
+<span class="go">lag = 2</span>
+<span class="go">predict=3</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">embed_vectors_1d</span>
+<span class="go">features = [[0,2,4], [1,3,5], [2,4,6], [3,5,7]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="skccm.skccm.Embed.mutual_information">
+<code class="descname">mutual_information</code><span class="sig-paren">(</span><em>max_lag</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.skccm.Embed.mutual_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the mutual information between the an unshifted time
+series and a shifted time series.</p>
+<p>Utilizes scikit-learn&#8217;s implementation of the mutual information found
+in sklearn.metrics.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_lag</strong> (<em>integer</em>) &#8211; Maximum amount to shift the time series.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>m_score</strong> &#8211; Mutual information at between the unshifted time series and the
+shifted time series,</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1-D array</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
         <link rel="next" title="Predict" href="predict.html"/>
         <link rel="prev" title="Generate Data" href="generate-data.html"/> 
@@ -130,7 +133,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/embed.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/embed.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -142,11 +145,10 @@
             
   <div class="section" id="embed">
 <span id="id1"></span><h1>Embed<a class="headerlink" href="#embed" title="Permalink to this headline">¶</a></h1>
-<p>Embedding the time series is required in order to determine causation. I would suggest reading <a class="reference external" href="http://www.physics.emory.edu/faculty/weeks//research/tseries3.html">this post by a professor at emory</a> to understand which lag and embedding dimension is appropriate.</p>
-<p>As a quick recap, the lag is picked as the first minimum in the mutual information and the embedding dimension is picked using a false near neighbors test. In practice, however, it is acceptable to use the embedding that gives the highest forecast skill. As a starting point, an embedding dimension of 3 is a good value for 1D systems.</p>
+<p>Before performing convergent cross mapping, both time series must be appropriately embed. As a quick recap, the lag is picked as the first minimum in the mutual information and the embedding dimension is picked using a false near neighbors test. In practice, however, it is acceptable to use the embedding that gives the highest forecast skill.</p>
 <div class="section" id="lag-value">
 <h2>Lag Value<a class="headerlink" href="#lag-value" title="Permalink to this headline">¶</a></h2>
-<p>Mutual information is used as a way to jump far enough in time that new information about the system can be gained. A similar idea is calculating the autocorrelation. Systems that don&#8217;t change much from one time step to the next would have higher autocorrelation and thus a larger lag value would be necessary to gain new information about the system. It turns out that using mutual information over autocorrelation allows for better predictions to be made [Chaos Paper Link].</p>
+<p>In attempting to use the time series to reconstruct the state space behavior of a complete system, a lag is needed to form the embedding vector. This lag is most commonly found from the first minimum in the mutual information between the time series and a shifted version of itself. The first minimum in the mutual information can be thought of as jumping far enough away in the time series that new information is gained. A more inituitive but less commonly used procedure to finding the lag is using the first minimum in the autocorrelation. The mutual information calculation can be done using the embed class provided by skccm.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">skccm</span> <span class="k">as</span> <span class="nn">ccm</span>
 
 <span class="n">E</span> <span class="o">=</span> <span class="n">edm</span><span class="o">.</span><span class="n">Embed</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="c1">#initiate the class</span>
@@ -156,12 +158,11 @@
 </pre></div>
 </div>
 <img alt="_images/lorenz_mutual_info.png" class="align-center" src="_images/lorenz_mutual_info.png" />
-<p>The figure above shows the mutual information for the <span class="math">\(x\)</span> values of the lorenz time series. We can see a minimum around 16.</p>
+<p>The figure above shows the mutual information for the <span class="math">\(x\)</span> values of the lorenz time series. We can see a minimum around 16. If we were interested in reconstructing the state space behavior we would use a lag of 16.</p>
 </div>
 <div class="section" id="embedding-dimension">
 <h2>Embedding Dimension<a class="headerlink" href="#embedding-dimension" title="Permalink to this headline">¶</a></h2>
-<p>Ideally you want to find the best embedding dimension for a specific time series. A good rule of thumb is to use an embedding dimension of three as your first shot. After the initial analysis, you can tweak this hyperparameter until you achieve the best prediction skill.</p>
-<p>Alternatively, you can use a [false near neighbor][fnn] test when the reconstructed attractor is fully &#8220;unfolded&#8221;. This functionality is not in skccm currently, but will be added in the future.</p>
+<p>Traditionally, the embedding dimension is chosen using a <a class="reference external" href="https://www.wikiwand.com/en/False_nearest_neighbor_algorithm">false near neighbor test</a>. This checks to see when the reconstructed attractor is fully &#8220;unfolded&#8221;. This functionality is not in skccm currently, but will be added in the future. In practice, the embedding dimension that gives the highest forecast skill is chosen. The false near neighbor test can be noisy for real world systems.</p>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
@@ -175,7 +176,7 @@
 <span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">embed_vectors_1d</span><span class="p">(</span><span class="n">lag</span><span class="p">,</span> <span class="n">emb</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>More examples of 1d embeddings are shown below. E is the embedding dimension and L is the lag.</p>
+<p>More examples of 1d embeddings are shown below. L is the lag and E is the embedding dimension.</p>
 <img alt="_images/embedding_examples.png" class="align-center" src="_images/embedding_examples.png" />
 </div>
 </div>

@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
         <link rel="next" title="Module Reference" href="module-reference.html"/>
         <link rel="prev" title="Predict" href="predict.html"/> 
@@ -125,7 +128,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/score.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/score.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -137,7 +140,9 @@
             
   <div class="section" id="score">
 <h1>Score<a class="headerlink" href="#score" title="Permalink to this headline">¶</a></h1>
-<p>The way the predictions are evaluated in the paper is by using the <a href="#id1"><span class="problematic" id="id2">`coefficient of determination`_</span></a> between the predictions and the actual value. This is done for all the predictions at multiple library lengths. If the predictions for <span class="math">\(X_1\)</span> are better than <span class="math">\(X_2\)</span> than it is said that <span class="math">\(X_1\)</span> influences <span class="math">\(X_2\)</span>.</p>
+<p>The way the predictions are evaluated in the paper is by using the <a class="reference external" href="https://www.wikiwand.com/en/Coefficient_of_determination">coefficient of determination</a> between the predictions and the actual value. This is done for all the predictions at multiple library lengths. If the predictions for <span class="math">\(X_1\)</span> are better than <span class="math">\(X_2\)</span> than it is said that <span class="math">\(X_1\)</span> influences <span class="math">\(X_2\)</span>.</p>
+<img alt="_images/xmap_lib_len.png" class="align-center" src="_images/xmap_lib_len.png" />
+<p>In the plot above, the blue line has a higher forecast skill than the green line. This indicates that the blue system is forcing the green system. Another important feature is that they converge as the library length is increased. This indicates that the shadow manifold has been appropriately populated and novel predictions can be made.</p>
 </div>
 
 

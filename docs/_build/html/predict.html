@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
         <link rel="next" title="Score" href="score.html"/>
         <link rel="prev" title="Embed" href="embed.html"/> 
@@ -131,7 +134,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/predict.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/predict.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -171,16 +174,8 @@
 <div class="section" id="weighted-average">
 <h2>Weighted Average<a class="headerlink" href="#weighted-average" title="Permalink to this headline">¶</a></h2>
 <p>The next step is to use the near neighbor indices and weights to make a prediction about the other time series. The indices that were found by calculating the distance from every sample in X1te to every sample in X1tr, are used on X2tr to make a prediction about X2te. This seems a little counterintuitive, but it is expected that if one time series influences the other, the system being forced should be in a similar state when the system doing the forcing is in a certain configuration.</p>
-<img alt="_images/switching_weights.png" src="_images/switching_weights.png" />
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">align:</th><td class="field-body">center</td>
-</tr>
-</tbody>
-</table>
-<p>Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need $$K+1$$ near neighbors in order to surround a point.</p>
+<img alt="_images/switching_weights.png" class="align-center" src="_images/switching_weights.png" />
+<p>Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need <span class="math">\(K+1\)</span> near neighbors in order to surround a point.</p>
 </div>
 <div class="section" id="library-length">
 <h2>Library Length<a class="headerlink" href="#library-length" title="Permalink to this headline">¶</a></h2>

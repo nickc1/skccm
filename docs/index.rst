@@ -28,7 +28,7 @@ For a more complete background, I suggest checking out the following papers:
 1. `Detecting Causality in Complex Ecosystems by Sugihara`_
 2. `Distinguishing time-delayed causal interactions using convergent cross mapping by Ye`_
 
-Sugihara also have a good `talk about about Correlation and Causation`_.
+Sugihara also has a good `talk about about Correlation and Causation`_.
 
 
 

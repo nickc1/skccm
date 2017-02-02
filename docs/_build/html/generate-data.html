@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
         <link rel="next" title="Embed" href="embed.html"/>
         <link rel="prev" title="Quick Example" href="quick-example.html"/> 
@@ -125,7 +128,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/generate-data.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/generate-data.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -142,117 +145,138 @@
 <dt id="skccm.data.coupled_logistic">
 <code class="descclassname">skccm.data.</code><code class="descname">coupled_logistic</code><span class="sig-paren">(</span><em>rx1</em>, <em>rx2</em>, <em>b12</em>, <em>b21</em>, <em>ts_length</em>, <em>random_start=False</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.data.coupled_logistic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coupled logistic map.</p>
-<dl class="docutils">
-<dt>rx1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>parameter that determines chaotic behavior of the x1 series</dd>
-<dt>rx2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>parameter that determines chatotic behavior of the x2 series</dd>
-<dt>b12</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Influence of x1 on x2</dd>
-<dt>b21</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Influence of x2 on x1</dd>
-<dt>ts_length</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Length of the calculated time series</dd>
-<dt>random_start</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">Boolean</span><dd>random initialization of starting conditions</dd>
-</dl>
-<dl class="docutils">
-<dt>x1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,) that stores the values of the x series</dd>
-<dt>x2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,) that stores the values of the y series</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rx1</strong> (<em>float</em>) &#8211; Parameter that determines chaotic behavior of the x1 series.</li>
+<li><strong>rx2</strong> (<em>float</em>) &#8211; Parameter that determines chatotic behavior of the x2 series.</li>
+<li><strong>b12</strong> (<em>float</em>) &#8211; Influence of x1 on x2.</li>
+<li><strong>b21</strong> (<em>float</em>) &#8211; Influence of x2 on x1.</li>
+<li><strong>ts_length</strong> (<em>int</em>) &#8211; Length of the calculated time series.</li>
+<li><strong>random_start</strong> (<em>bool</em>) &#8211; Random initialization of starting conditions.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x1</strong> (<em>1d array</em>) &#8211; Array of length (ts_length,) that stores the values of the x series.</li>
+<li><strong>x2</strong> (<em>1d array</em>) &#8211; Array of length (ts_length,) that stores the values of the y series.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="skccm.data.driven_rand_logistic">
 <code class="descclassname">skccm.data.</code><code class="descname">driven_rand_logistic</code><span class="sig-paren">(</span><em>rx2</em>, <em>b12</em>, <em>ts_length</em>, <em>random_start=False</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.data.driven_rand_logistic" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Logistic map with random forcing. x1 is the random array and x2 is the</dt>
-<dd>logistic map.</dd>
-</dl>
-<dl class="docutils">
-<dt>rx2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>parameter that determines chatotic behavior of the x2 series</dd>
-<dt>b12</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Influence of x1 on x2</dd>
-<dt>ts_length</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Length of the calculated time series</dd>
-<dt>random_start</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">Boolean</span><dd>random initialization of starting conditions</dd>
-</dl>
-<dl class="docutils">
-<dt>x1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,)</dd>
-<dt>x2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,)</dd>
-</dl>
+<dd><p>Logistic map with random forcing. x1 is the random array and x2 is the
+logistic map.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rx2</strong> (<em>float</em>) &#8211; Parameter that determines chatotic behavior of the x2 series.</li>
+<li><strong>b12</strong> (<em>float</em>) &#8211; Influence of x1 on x2.</li>
+<li><strong>ts_length</strong> (<em>int</em>) &#8211; Length of the calculated time series.</li>
+<li><strong>random_start</strong> (<em>Boolean</em>) &#8211; Random initialization of starting conditions.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x1</strong> (<em>array</em>) &#8211; Array of length (ts_length,)</li>
+<li><strong>x2</strong> (<em>array</em>) &#8211; Array of length (ts_length,)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="skccm.data.driving_sin">
 <code class="descclassname">skccm.data.</code><code class="descname">driving_sin</code><span class="sig-paren">(</span><em>rx2</em>, <em>b12</em>, <em>ts_length</em>, <em>random_start=False</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.data.driving_sin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sine wave driving a logistic map.</p>
-<dl class="docutils">
-<dt>rx2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>parameter that determines chatotic behavior of the x2 series</dd>
-<dt>b12</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Influence of x1 on x2</dd>
-<dt>ts_length</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Length of the calculated time series</dd>
-<dt>random_start</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">Boolean</span><dd>random initialization of starting conditions</dd>
-</dl>
-<dl class="docutils">
-<dt>x1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,) that stores the values of the x series</dd>
-<dt>x2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,) that stores the values of the y series</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rx2</strong> (<em>float</em>) &#8211; Parameter that determines chatotic behavior of the x2 series.</li>
+<li><strong>b12</strong> (<em>float</em>) &#8211; Influence of x1 on x2.</li>
+<li><strong>ts_length</strong> (<em>int</em>) &#8211; Length of the calculated time series.</li>
+<li><strong>random_start</strong> (<em>Boolean</em>) &#8211; Random initialization of starting conditions.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x1</strong> (<em>array</em>) &#8211; Array of length (ts_length,) that stores the values of the x series.</li>
+<li><strong>x2</strong> (<em>array</em>) &#8211; Array of length (ts_length,) that stores the values of the y series.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="skccm.data.lagged_coupled_logistic">
 <code class="descclassname">skccm.data.</code><code class="descname">lagged_coupled_logistic</code><span class="sig-paren">(</span><em>rx1</em>, <em>rx2</em>, <em>b12</em>, <em>b21</em>, <em>ts_length</em>, <em>random_start=False</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.data.lagged_coupled_logistic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coupled logistic map. x1 is driven by random lags of x2.</p>
-<dl class="docutils">
-<dt>rx1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>parameter that determines chaotic behavior of the x1 series</dd>
-<dt>rx2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>parameter that determines chatotic behavior of the x2 series</dd>
-<dt>b12</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Influence of x1 on x2</dd>
-<dt>b21</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Influence of x2 on x1</dd>
-<dt>ts_length</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Length of the calculated time series</dd>
-<dt>random_start</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">Boolean</span><dd>random initialization of starting conditions</dd>
-</dl>
-<dl class="docutils">
-<dt>x1</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,) that stores the values of the x series</dd>
-<dt>x2</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd>array of length (ts_length,) that stores the values of the y series</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rx1</strong> (<em>float</em>) &#8211; Parameter that determines chaotic behavior of the x1 series.</li>
+<li><strong>rx2</strong> (<em>float</em>) &#8211; Parameter that determines chatotic behavior of the x2 series.</li>
+<li><strong>b12</strong> (<em>float</em>) &#8211; Influence of x1 on x2.</li>
+<li><strong>b21</strong> (<em>float</em>) &#8211; Influence of x2 on x1.</li>
+<li><strong>ts_length</strong> (<em>int</em>) &#8211; Length of the calculated time series.</li>
+<li><strong>random_start</strong> (<em>Boolean</em>) &#8211; Random initialization of starting conditions.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x1</strong> (<em>array</em>) &#8211; Array of length (ts_length,) that stores the values of the x series.</li>
+<li><strong>x2</strong> (<em>array</em>) &#8211; Array of length (ts_length,) that stores the values of the y series.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="skccm.data.lorenz">
 <code class="descclassname">skccm.data.</code><code class="descname">lorenz</code><span class="sig-paren">(</span><em>sz=10000</em>, <em>noise=0</em>, <em>max_t=100.0</em><span class="sig-paren">)</span><a class="headerlink" href="#skccm.data.lorenz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Integrates the lorenz equation defined in lorenz_deriv</p>
-<dl class="docutils">
-<dt>sz</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Length of the time series to be integrated</dd>
-<dt>noise</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Amplitude of noise to be added to the lorenz equation</dd>
-<dt>max_t</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Length of time to solve the lorenz equation over</dd>
-</dl>
-<dl class="docutils">
-<dt>X</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">1D array</span><dd>Returns a 1D periodic equaiton of size (sz) with values between 0 and 1</dd>
-</dl>
+<dd><p>Integrates the lorenz equation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sz</strong> (<em>int</em>) &#8211; Length of the time series to be integrated.</li>
+<li><strong>noise</strong> (<em>float</em>) &#8211; Amplitude of noise to be added to the lorenz equation.</li>
+<li><strong>max_t</strong> (<em>float</em>) &#8211; Length of time to solve the lorenz equation over.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X</strong> &#8211; Returns a 1D periodic of solutions to the Lorenz equations.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">1D array</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

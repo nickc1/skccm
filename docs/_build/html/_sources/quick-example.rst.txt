@@ -4,7 +4,7 @@ Quick Example
 =============
 
 
-In order to illustrate how this package works, we will use the coupled logistic map from the original convergent cross mapping paper. The equations the form:
+In order to illustrate how this package works, we will use the coupled logistic map from the original convergent cross mapping paper. The equations the take form:
 
 .. math::
 
@@ -102,9 +102,9 @@ Mutual information is used as a way to jump far enough in time that new informat
 
 *Figure:* The image above shows the mutual information for the $$x$$ values of the lorenz time series. We can see a minimum around 16.
 
-***
 
-<br>
+
+
 
 **2. Determine the embedding dimension by finding which gives the highest prediction skill.**
 
@@ -112,7 +112,7 @@ Ideally you want to find the best embedding dimension for a specific time series
 
 Alternatively, you can use a [false near neighbor][fnn] test when the reconstructed attractor is fully "unfolded". This functionality is not in skccm currently, but will be added in the future.
 
-***
+
 
 .. image:: /_static/ccm/embedding.gif
    :align: center
@@ -120,9 +120,7 @@ Alternatively, you can use a [false near neighbor][fnn] test when the reconstruc
 
 *Figure:* An example of an embedding dimension of three and a lag of two.
 
-***
 
-<br>
 
 
 
@@ -136,7 +134,6 @@ This protects against highly autocorrelated time series. For example, random wal
 
 *Figure:* Splitting an embedded time series into a training set and a testing set.
 
-***
 
 <br>
 
@@ -158,15 +155,13 @@ The next step is to use the near neighbor indices and weights to make a predicti
 
 INSERT THOUGHT EXPERIMENT
 
-***
+
 
 .. image:: /_static/ccm/switching_weights.png
    :align: center
 
 *Figure:* An example of switching the indices. Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need $$K+1$$ near neighbors in order to surround a point.
 
-***
-<br>
 
 **7. Repeat the prediction for multiple library lengths**
 

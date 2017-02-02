@@ -44,9 +44,9 @@ Weighted Average
 The next step is to use the near neighbor indices and weights to make a prediction about the other time series. The indices that were found by calculating the distance from every sample in X1te to every sample in X1tr, are used on X2tr to make a prediction about X2te. This seems a little counterintuitive, but it is expected that if one time series influences the other, the system being forced should be in a similar state when the system doing the forcing is in a certain configuration.
 
 .. image:: /_static/ccm/switching_weights.png
-:align: center
+   :align: center
 
-Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need $$K+1$$ near neighbors in order to surround a point.
+Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need :math:`K+1` near neighbors in order to surround a point.
 
 
 Library Length

@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="skccm 0.1 documentation" href="index.html"/>
         <link rel="next" title="Generate Data" href="generate-data.html"/>
         <link rel="prev" title="Install" href="install.html"/> 
@@ -128,7 +131,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/quick-example.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/quick-example.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -140,7 +143,7 @@
             
   <div class="section" id="quick-example">
 <span id="example"></span><h1>Quick Example<a class="headerlink" href="#quick-example" title="Permalink to this headline">¶</a></h1>
-<p>In order to illustrate how this package works, we will use the coupled logistic map from the original convergent cross mapping paper. The equations the form:</p>
+<p>In order to illustrate how this package works, we will use the coupled logistic map from the original convergent cross mapping paper. The equations the take form:</p>
 <div class="math">
 \[ \begin{align}\begin{aligned}X(t+1) = X(t)[r_x - r_x X(t) - \beta_{x,y}Y(t)]\\Y(t+1) = Y(t)[r_y - r_y Y(t) - \beta_{y,x}X(t)]\end{aligned}\end{align} \]</div>
 <p>Notice that <span class="math">\(\beta_{x,y}\)</span> controls the amount of information from the <span class="math">\(Y\)</span> time series that is being injected into the <span class="math">\(X\)</span> time series. Likewise, <span class="math">\(\beta_{y,x}\)</span> controls the amount of information injected into the <span class="math">\(Y\)</span> time series from the <span class="math">\(X\)</span> time series. These parameters control how much one series influences the other. There is a function in <code class="docutils literal"><span class="pre">skccm.data</span></code> to reproduce these time series. For example:</p>
@@ -203,21 +206,15 @@
 <p>Mutual information is used as a way to jump far enough in time that new information about the system can be gained. A similar idea is calculating the autocorrelation. Systems that don&#8217;t change much from one time step to the next would have higher autocorrelation and thus a larger lag value would be necessary to gain new information about the system. It turns out that using mutual information over autocorrelation allows for better predictions to be made [CITATION].</p>
 <img alt="_images/lorenz_mutual_info.png" class="align-center" src="_images/lorenz_mutual_info.png" />
 <p><em>Figure:</em> The image above shows the mutual information for the $$x$$ values of the lorenz time series. We can see a minimum around 16.</p>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a><a href="#id3"><span class="problematic" id="id4">*</span></a></p>
-<p>&lt;br&gt;</p>
 <p><strong>2. Determine the embedding dimension by finding which gives the highest prediction skill.</strong></p>
 <p>Ideally you want to find the best embedding dimension for a specific time series. A good rule of thumb is to use an embedding dimension of three as your first shot. After the initial analysis, you can tweak this hyperparameter until you achieve the best prediction skill.</p>
 <p>Alternatively, you can use a [false near neighbor][fnn] test when the reconstructed attractor is fully &#8220;unfolded&#8221;. This functionality is not in skccm currently, but will be added in the future.</p>
-<p><a href="#id5"><span class="problematic" id="id6">**</span></a><a href="#id7"><span class="problematic" id="id8">*</span></a></p>
 <img alt="_images/embedding.gif" class="align-center" src="_images/embedding.gif" />
 <p><em>Figure:</em> An example of an embedding dimension of three and a lag of two.</p>
-<p><a href="#id9"><span class="problematic" id="id10">**</span></a><a href="#id11"><span class="problematic" id="id12">*</span></a></p>
-<p>&lt;br&gt;</p>
 <p><strong>3. Split each embedded time series into a training set and testing set.</strong></p>
 <p>This protects against highly autocorrelated time series. For example, random walk time series can seem like they are coupled if they are not split into a training set and testing set.</p>
 <img alt="_images/train_test_split.png" class="align-center" src="_images/train_test_split.png" />
 <p><em>Figure:</em> Splitting an embedded time series into a training set and a testing set.</p>
-<p><a href="#id13"><span class="problematic" id="id14">**</span></a><a href="#id15"><span class="problematic" id="id16">*</span></a></p>
 <p>&lt;br&gt;</p>
 <p><strong>5. Calculate the distance from each test sample to each training sample</strong></p>
 <p>At this point, you will have these four embedded time series:</p>
@@ -231,11 +228,8 @@
 <p><strong>6. Use the near neighbor time indices from $$X_1$$ to make a prediction about $$X_2$$</strong></p>
 <p>The next step is to use the near neighbor indices and weights to make a prediction about the other time series. The indices that were found by calculating the distance from every sample in X1te to every sample in X1tr, are used on X2tr to make a prediction about X2te. This seems a little counterintuitive, but it is expected that if one time series influences the other, the system being forced should be in a similar state when the system doing the forcing is in a certain configuration.</p>
 <p>INSERT THOUGHT EXPERIMENT</p>
-<p><a href="#id17"><span class="problematic" id="id18">**</span></a><a href="#id19"><span class="problematic" id="id20">*</span></a></p>
 <img alt="_images/switching_weights.png" class="align-center" src="_images/switching_weights.png" />
 <p><em>Figure:</em> An example of switching the indices. Notice the distances and indices have the same number of samples as the testing set, but an extra dimension. This is because you need $$K+1$$ near neighbors in order to surround a point.</p>
-<p><a href="#id21"><span class="problematic" id="id22">**</span></a>*
-&lt;br&gt;</p>
 <p><strong>7. Repeat the prediction for multiple library lengths</strong></p>
 <p>The hope is we see convergence as the library length is increased. By increasing the library length, the density of the rebuilt attractor is increasing. As that attractor becomes more and more populated, better predictions should be able to be made.</p>
 <p><strong>8. Finally, evaluate the predictions</strong></p>
