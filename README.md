@@ -4,20 +4,30 @@ skccm
 
 ### [Documentation][ccm-docs]
 
-skccm (Scikit Convergent Cross Mapping) is an implementation of [convergent cross mapping][ccm-wiki] (CCM) using scikit-learn's style. More specifically it is an implementation from the paper, [Detecting Causality in Complex Ecosystems][ccm-paper]. It reconstructs [phase spaces][phase-space] to analyze the effects of one system on the other.
+Scikit Convergent Cross Mapping (skccm) can be used as a way to detect causality
+between time series.
 
-Quick Explanation
------------------
+For a quick explanation of this package, I suggest checking out the [Documentation][ccm-docs] as well as the wikipedia article on [convergent cross mapping][ccm-wiki] . Additionally,
+[Dr. Sugihara's lab][sugihara-lab] has produced some good summary videos about the topic:
 
-[State Space Reconstruction: Convergent Cross Mapping by Sugihara Lab][ccm-youtube]
+1. [Time Series and Dynamic Manifolds][yt-dynamic-manifolds]
+2. [Reconstructed Shadow Manifold][yt-reconstructed-manifolds]
+3. [State Space Reconstruction: Convergent Cross Mapping][yt-ccm]
 
-[ccm-docs]: http://nickc1.github.io/skccm/
-[phase-space]: https://en.wikipedia.org/wiki/Phase_space)
-[nlf-book]: http://www.amazon.com/Nonlinear-Time-Analysis-Holger-Kantz/dp/0521529026/ref=sr_1_8?ie=UTF8&qid=1452278686&sr=8-8&keywords=nonlinear+analysis
-[nn-algo]: https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
-[sknn-algo]: http://scikit-learn.org/stable/modules/neighbors.html
-[scikit]: http://scikit-learn.org/stable/
-[false-nn]: http://www.mpipks-dresden.mpg.de/~tisean/TISEAN_2.1/docs/chaospaper/node9.html
+
+For a more complete background, I suggest checking out the following papers:
+
+1. [Detecting Causality in Complex Ecosystems by Sugihara][ccm-paper]
+2. [Distinguishing time-delayed causal interactions using convergent cross mapping by Ye][ye-paper]
+
+Sugihara also has a good [talk about about Correlation and Causation][causation-talk]
+
+[ccm-docs]: http://skccm.readthedocs.io/en/latest/
 [ccm-wiki]: https://www.wikiwand.com/en/Convergent_cross_mapping
+[sugihara-lab]: http://deepeco.ucsd.edu/
+[yt-dynamic-manifolds]: https://www.youtube.com/watch?v=7ucgQE3SO0o
+[yt-reconstructed-manifolds]: https://www.youtube.com/watch?v=rs3gYeZeJcw
+[yt-ccm]: https://www.youtube.com/watch?v=NrFdIz-D2yM
 [ccm-paper]: http://science.sciencemag.org/content/338/6106/496
-[ccm-youtube]: https://www.youtube.com/watch?v=NrFdIz-D2yM
+[ye-paper]: http://www.nature.com/articles/srep14750
+[causation-talk]: https://www.youtube.com/watch?v=uhONGgfx8Do&t=2416s

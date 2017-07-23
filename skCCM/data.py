@@ -200,8 +200,8 @@ def lorenz(sz=10000, noise=0, max_t=100.):
 
     Returns
     -------
-    X : 1D array
-        Returns a 1D periodic of solutions to the Lorenz equations.
+    X : 2D array
+        Solutions to the Lorenz equations. Columns are X,Y,Z.
     """
 
     def lorenz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
