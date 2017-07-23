@@ -12,12 +12,13 @@ In attempting to use the time series to reconstruct the state space behavior of 
 
 ::
 
-  import skccm as ccm
-
-  E = edm.Embed(X) #initiate the class
-
-  max_lag = 100
-  mi = E.mutual_information(max_lag)
+  from skccm import Embed
+  lag = 1
+  embed = 2
+  e1 = Embed(x1)
+  e2 = Embed(x2)
+  X1 = e1.embed_vectors_1d(lag,embed)
+  X2 = e2.embed_vectors_1d(lag,embed)
 
 .. image:: /_static/ccm/lorenz_mutual_info.png
    :align: center
@@ -43,11 +44,13 @@ Using this package, this would be represented as:
 
 ::
 
-  E = ccm.Embed(X)
-
-  lag = 2
-  embed = 3
-  X,y = E.embed_vectors_1d(lag, emb)
+  from skccm import Embed
+  lag = 1
+  embed = 2
+  e1 = Embed(x1)
+  e2 = Embed(x2)
+  X1 = e1.embed_vectors_1d(lag,embed)
+  X2 = e2.embed_vectors_1d(lag,embed)
 
 
 More examples of 1d embeddings are shown below. L is the lag and E is the embedding dimension.

@@ -36,8 +36,11 @@ The next step is to embed both time series. An in-depth discussion about appropr
 
 ::
 
+  import skccm as ccm
   lag = 1
   embed = 2
+  e1 = ccm.Embed(x1)
+  e2 = ccm.Embed(x2)
   X1 = e1.embed_vectors_1d(lag,embed)
   X2 = e2.embed_vectors_1d(lag,embed)
 
@@ -55,14 +58,17 @@ Now that we have embed the time series, all that is left to do is check the fore
   #split the embedded time series
   x1tr, x1te, x2tr, x2te = train_test_split(X1,X2, percent=.75)
 
-  CCM = ccm.ccm() #initiate the class
+  CCM = ccm.CCM() #initiate the class
 
   #library lengths to test
   len_tr = len(x1tr)
   lib_lens = np.arange(10, len_tr, len_tr/20, dtype='int')
 
   #test causation
-  sc1, sc2 = CCM.predict_causation(x1tr, x1te, x2tr, x2te,lib_lens)
+  CCM.fit(x1tr,x2tr)
+  x1p, x2p = CCM.predict(x1te, x2te,lib_lengths=lib_lens)
+
+  sc1,sc2 = CCM.score()
 
 
 .. image:: /_static/ccm/xmap_lib_len.png

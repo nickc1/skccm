@@ -2,7 +2,7 @@ from os.path import join as pjoin
 
 # Format expected by setup.py and doc/source/conf.py: string of form "X.Y.Z"
 _version_major = 0
-_version_minor = 1
+_version_minor = 2
 _version_micro = ''  # use '' for first of series, number for 1 and above
 _version_extra = 'dev'
 #_version_extra = ''  # Uncomment this for full releases
@@ -25,11 +25,11 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering"]
 
 # Description should be a one-liner:
-description = "skCCM: Convergent Cross Mapping with a simple api"
+description = "skccm: Convergent Cross Mapping with a simple api"
 # Long description will go up on the pypi page
 long_description = """
 
-skCCM
+skccm
 ========
 
 This package is an implementation of convergent cross mapping (CCM)
@@ -38,13 +38,13 @@ paper, **Detecting Causality in Complex Ecosystems**. It reconstructs
 phase spaces to analyze the effects of one system on the other.
 """
 
-NAME = "skCCM"
+NAME = "skccm"
 MAINTAINER = "Nick Cortale"
 MAINTAINER_EMAIL = "nickcortale@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
-URL = "https://github.com/NickC1/skCCM"
-DOWNLOAD_URL = "https://github.com/NickC1/skCCM/tarball/0.1"
+URL = "https://github.com/NickC1/skccm"
+DOWNLOAD_URL = "https://github.com/NickC1/skccm/tarball/0.1"
 LICENSE = "MIT"
 AUTHOR = "Nick Cortale"
 AUTHOR_EMAIL = "nickcortale@gmail.com"
@@ -53,6 +53,6 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGES = ['skCCM']
+PACKAGES = ['skccm']
 PACKAGE_DATA = ""
 REQUIRES = ["numpy"]
