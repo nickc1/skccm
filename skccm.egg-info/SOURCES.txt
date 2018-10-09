@@ -1,0 +1,11 @@
+setup.cfg
+skccm/__init__.py
+skccm/data.py
+skccm/paper.py
+skccm/skccm.py
+skccm/utilities.py
+skccm/version.py
+skccm.egg-info/PKG-INFO
+skccm.egg-info/SOURCES.txt
+skccm.egg-info/dependency_links.txt
+skccm.egg-info/top_level.txt
