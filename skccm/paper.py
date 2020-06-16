@@ -157,8 +157,8 @@ class CCM:
 
 
 		#throw out the indices that are in the embedding
-		dist1, ind1 = ut.throw_out_nn_indices(dist1,ind1,conf1)
-		dist2, ind2 = ut.throw_out_nn_indices(dist2,ind2,conf2)
+		dist1, ind1 = ut.throw_out_nn_indices(ind1,dist1,conf1)
+		dist2, ind2 = ut.throw_out_nn_indices(ind2,dist2,conf2)
 
 		n_sorround = self.X1.shape[1] + 1
 		#flipping allows for a faster implentation as we can feed
